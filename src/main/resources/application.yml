@@ -1,0 +1,92 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /homemaker
+
+spring:
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/home_make_db?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    username: root
+    password: xusd1994
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    database: 0
+    timeout: 10000
+    lettuce:
+      pool:
+        max-active: 8
+        max-wait: -1
+        max-idle: 8
+        min-idle: 0
+
+mybatis-plus:
+  mapper-locations: classpath:/mapper/**/*.xml
+  type-aliases-package: com.homemaker.entity
+  configuration:
+    map-underscore-to-camel-case: true
+
+# 日志配置
+logging:
+  level:
+    com.homemaker: debug
+    com.baomidou.mybatisplus: info
+
+# Swagger配置
+swagger:
+  enabled: true
+  base-package: com.homemaker.controller
+
+# 微信小程序配置
+wechat:
+  mini:
+    appid: wx0c6c16721197351e
+    secret: 28fd69331b2b11288c611e38f3ce3a17
+
+# 登录拦截器配置
+login:
+  interceptor:
+    # 根路径和上下文路径
+    root-paths:
+      - "/"
+      - "/homemaker"
+      - "/homemaker/"
+      - ""
+      - "/homemaker/index.html"
+      - "/homemaker/api/service-type/list"
+    # 登录相关接口
+    login-paths:
+      - "/api/wx/login"
+      - "/api/admin/login"
+      - "/api/wx/validate"
+      - "/api/test/"
+    # 静态资源路径前缀
+    static-prefixes:
+      - "/static/"
+      - "/swagger-ui/"
+      - "/v3/api-docs/"
+      - "/css/"
+      - "/js/"
+      - "/img/"
+      - "/fonts/"
+    # 静态资源文件扩展名
+    static-extensions:
+      - ".css"
+      - ".js"
+      - ".png"
+      - ".jpg"
+      - ".jpeg"
+      - ".gif"
+      - ".ico"
+      - ".svg"
+      - ".woff"
+      - ".woff2"
+      - ".ttf"
+      - ".eot"
+    # 特定静态资源文件
+    specific-static-files:
+      - "/homemaker/favicon.ico"

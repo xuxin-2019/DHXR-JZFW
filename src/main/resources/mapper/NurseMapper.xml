@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.homemaker.mapper.NurseMapper">
+    
+    <resultMap id="NurseVOResultMap" type="com.homemaker.entity.NurseVO">
+        <id column="id" property="id"/>
+        <result column="phone" property="phone"/>
+        <result column="name" property="name"/>
+        <result column="age" property="age"/>
+        <result column="service_type_id" property="serviceTypeId"/>
+        <result column="service_type_name" property="serviceTypeName"/>
+        <result column="avatar_url" property="avatarUrl"/>
+        <result column="status" property="status"/>
+        <result column="rating" property="rating"/>
+        <result column="service_count" property="serviceCount"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+    
+    <select id="selectNurseListWithDetails" resultMap="NurseVOResultMap">
+        SELECT 
+            n.id,
+            n.phone,
+            n.name,
+            n.age,
+            n.service_type_id,
+            st.name AS service_type_name,
+            n.avatar_url,
+            n.status,
+            n.rating,
+            n.service_count,
+            n.create_time,
+            n.update_time
+        FROM 
+            nurse n
+        LEFT JOIN 
+            service_type st ON n.service_type_id = st.id
+        <where>
+            <if test="params.phone != null and params.phone != ''">
+                AND n.phone LIKE CONCAT('%', #{params.phone}, '%')
+            </if>
+            <if test="params.name != null and params.name != ''">
+                AND n.name LIKE CONCAT('%', #{params.name}, '%')
+            </if>
+        </where>
+        ORDER BY 
+            n.create_time DESC
+    </select>
+</mapper>

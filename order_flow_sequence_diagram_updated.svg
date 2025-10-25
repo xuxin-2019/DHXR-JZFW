@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="800" height="700" viewBox="0 0 800 700" xmlns="http://www.w3.org/2000/svg">
+    <title>家政服务订单流程时序图</title>
+    <!-- 背景和标题 -->
+    <rect width="800" height="700" fill="#f9f9f9"/>
+    <text x="400" y="30" font-family="Arial" font-size="20" text-anchor="middle" fill="#333">家政服务订单流程时序图</text>
+    <text x="400" y="55" font-family="Arial" font-size="14" text-anchor="middle" fill="#666">（移除"服务中"状态版本）</text>
+    
+    <!-- 参与者 -->
+    <rect x="100" y="80" width="120" height="40" fill="#d1e0ff" stroke="#3366cc" stroke-width="1" rx="5" ry="5"/>
+    <text x="160" y="105" font-family="Arial" font-size="16" text-anchor="middle" fill="#333">用户</text>
+    
+    <rect x="280" y="80" width="120" height="40" fill="#e6ffe6" stroke="#33cc33" stroke-width="1" rx="5" ry="5"/>
+    <text x="340" y="105" font-family="Arial" font-size="16" text-anchor="middle" fill="#333">系统</text>
+    
+    <rect x="460" y="80" width="120" height="40" fill="#fff0cc" stroke="#ffcc00" stroke-width="1" rx="5" ry="5"/>
+    <text x="520" y="105" font-family="Arial" font-size="16" text-anchor="middle" fill="#333">管理员</text>
+    
+    <rect x="640" y="80" width="120" height="40" fill="#ffe6e6" stroke="#cc3333" stroke-width="1" rx="5" ry="5"/>
+    <text x="700" y="105" font-family="Arial" font-size="16" text-anchor="middle" fill="#333">护工</text>
+    
+    <!-- 参与者生命线 -->
+    <line x1="160" y1="120" x2="160" y2="650" stroke="#3366cc" stroke-width="2" stroke-dasharray="5,5"/>
+    <line x1="340" y1="120" x2="340" y2="650" stroke="#33cc33" stroke-width="2" stroke-dasharray="5,5"/>
+    <line x1="520" y1="120" x2="520" y2="650" stroke="#ffcc00" stroke-width="2" stroke-dasharray="5,5"/>
+    <line x1="700" y1="120" x2="700" y2="650" stroke="#cc3333" stroke-width="2" stroke-dasharray="5,5"/>
+    
+    <!-- 下单支付流程 -->
+    <rect x="130" y="140" width="60" height="30" fill="#d1e0ff" stroke="#3366cc" stroke-width="1" rx="3" ry="3"/>
+    <text x="160" y="160" font-family="Arial" font-size="12" text-anchor="middle" fill="#333">选择服务</text>
+    
+    <line x1="160" y1="170" x2="160" y2="190" stroke="#333" stroke-width="1"/>
+    
+    <rect x="130" y="190" width="60" height="30" fill="#d1e0ff" stroke="#3366cc" stroke-width="1" rx="3" ry="3"/>
+    <text x="160" y="210" font-family="Arial" font-size="12" text-anchor="middle" fill="#333">支付</text>
+    
+    <line x1="160" y1="220" x2="340" y2="220" stroke="#333" stroke-width="1" marker-end="url(#arrowhead)"/>
+    
+    <rect x="310" y="210" width="60" height="30" fill="#e6ffe6" stroke="#33cc33" stroke-width="1" rx="3" ry="3"/>
+    <text x="340" y="230" font-family="Arial" font-size="12" text-anchor="middle" fill="#333">创建订单</text>
+    <text x="340" y="250" font-family="Arial" font-size="10" text-anchor="middle" fill="#666">Order status: 待派单(1)</text>
+    
+    <line x1="340" y1="260" x2="520" y2="260" stroke="#333" stroke-width="1" marker-end="url(#arrowhead)"/>
+    
+    <!-- 派单流程 -->
+    <rect x="490" y="250" width="60" height="30" fill="#fff0cc" stroke="#ffcc00" stroke-width="1" rx="3" ry="3"/>
+    <text x="520" y="270" font-family="Arial" font-size="12" text-anchor="middle" fill="#333">分配护工</text>
+    
+    <line x1="520" y1="280" x2="340" y2="280" stroke="#333" stroke-width="1" marker-end="url(#arrowhead)"/>
+    
+    <rect x="310" y="270" width="60" height="30" fill="#e6ffe6" stroke="#33cc33" stroke-width="1" rx="3" ry="3"/>
+    <text x="340" y="290" font-family="Arial" font-size="12" text-anchor="middle" fill="#333">更新订单</text>
+    <text x="340" y="310" font-family="Arial" font-size="10" text-anchor="middle" fill="#666">Order status: 已派单(2)</text>
+    
+    <line x1="340" y1="320" x2="700" y2="320" stroke="#333" stroke-width="1" marker-end="url(#arrowhead)"/>
+    
+    <rect x="670" y="310" width="60" height="30" fill="#ffe6e6" stroke="#cc3333" stroke-width="1" rx="3" ry="3"/>
+    <text x="700" y="330" font-family="Arial" font-size="12" text-anchor="middle" fill="#333">通知护工</text>
+    
+    <line x1="700" y1="340" x2="700" y2="360" stroke="#333" stroke-width="1"/>
+    
+    <!-- 护工接单/拒绝流程 -->
+    <rect x="670" y="360" width="60" height="30" fill="#ffe6e6" stroke="#cc3333" stroke-width="1" rx="3" ry="3"/>
+    <text x="700" y="380" font-family="Arial" font-size="12" text-anchor="middle" fill="#333">接单/拒绝</text>
+    
+    <line x1="700" y1="390" x2="340" y2="390" stroke="#333" stroke-width="1" marker-end="url(#arrowhead)"/>
+    
+    <rect x="310" y="380" width="60" height="30" fill="#e6ffe6" stroke="#33cc33" stroke-width="1" rx="3" ry="3"/>
+    <text x="340" y="400" font-family="Arial" font-size="12" text-anchor="middle" fill="#333">更新订单</text>
+    <text x="340" y="420" font-family="Arial" font-size="10" text-anchor="middle" fill="#666">Order status: 已接单(3) 或 已拒绝(7)</text>
+    
+    <line x1="340" y1="430" x2="160" y2="430" stroke="#333" stroke-width="1" marker-end="url(#arrowhead)"/>
+    
+    <rect x="130" y="420" width="60" height="30" fill="#d1e0ff" stroke="#3366cc" stroke-width="1" rx="3" ry="3"/>
+    <text x="160" y="440" font-family="Arial" font-size="12" text-anchor="middle" fill="#333">通知用户</text>
+    
+    <!-- 服务提供流程 -->
+    <line x1="700" y1="430" x2="700" y2="460" stroke="#333" stroke-width="1"/>
+    
+    <rect x="670" y="460" width="60" height="30" fill="#ffe6e6" stroke="#cc3333" stroke-width="1" rx="3" ry="3"/>
+    <text x="700" y="480" font-family="Arial" font-size="12" text-anchor="middle" fill="#333">提供服务</text>
+    
+    <line x1="700" y1="490" x2="340" y2="490" stroke="#333" stroke-width="1" marker-end="url(#arrowhead)"/>
+    
+    <rect x="310" y="480" width="60" height="30" fill="#e6ffe6" stroke="#33cc33" stroke-width="1" rx="3" ry="3"/>
+    <text x="340" y="500" font-family="Arial" font-size="12" text-anchor="middle" fill="#333">服务完成</text>
+    <text x="340" y="520" font-family="Arial" font-size="10" text-anchor="middle" fill="#666">Order status: 已完成(5)</text>
+    
+    <line x1="340" y1="530" x2="160" y2="530" stroke="#333" stroke-width="1" marker-end="url(#arrowhead)"/>
+    
+    <rect x="130" y="520" width="60" height="30" fill="#d1e0ff" stroke="#3366cc" stroke-width="1" rx="3" ry="3"/>
+    <text x="160" y="540" font-family="Arial" font-size="12" text-anchor="middle" fill="#333">确认服务</text>
+    
+    <line x1="160" y1="550" x2="160" y2="580" stroke="#333" stroke-width="1"/>
+    
+    <!-- 评价流程 -->
+    <rect x="130" y="580" width="60" height="30" fill="#d1e0ff" stroke="#3366cc" stroke-width="1" rx="3" ry="3"/>
+    <text x="160" y="600" font-family="Arial" font-size="12" text-anchor="middle" fill="#333">评价服务</text>
+    
+    <line x1="160" y1="610" x2="340" y2="610" stroke="#333" stroke-width="1" marker-end="url(#arrowhead)"/>
+    
+    <rect x="310" y="600" width="60" height="30" fill="#e6ffe6" stroke="#33cc33" stroke-width="1" rx="3" ry="3"/>
+    <text x="340" y="620" font-family="Arial" font-size="12" text-anchor="middle" fill="#333">创建评价</text>
+    
+    <!-- 箭头标记 -->
+    <defs>
+        <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#333"/>
+        </marker>
+    </defs>
+    
+    <!-- 图例 -->
+    <rect x="50" y="650" width="120" height="30" fill="#f0f0f0" stroke="#999" stroke-width="1"/>
+    <text x="60" y="670" font-family="Arial" font-size="10" fill="#333">订单状态：</text>
+    <text x="120" y="670" font-family="Arial" font-size="10" fill="#333">待派单(1) → 已派单(2) → 已接单(3) → 已完成(5)</text>
+</svg>

@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>居家服务管理系统</title>
+    <!-- 引入Element UI样式 -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <!-- 引入自定义样式 -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div id="app">
+        <!-- 登录页面 -->
+        <div v-if="!isLoggedIn" class="login-container">
+            <div class="login-form">
+                <h2>居家服务管理系统</h2>
+                <el-form ref="loginForm" :model="loginForm" :rules="loginRules" label-width="80px">
+                    <el-form-item label="用户名" prop="username">
+                        <el-input v-model="loginForm.username" placeholder="请输入用户名"></el-input>
+                    </el-form-item>
+                    <el-form-item label="密码" prop="password">
+                        <el-input v-model="loginForm.password" type="password" placeholder="请输入密码"></el-input>
+                    </el-form-item>
+                    <el-form-item>
+                        <el-button type="primary" @click="login" style="width: 100%">登录</el-button>
+                    </el-form-item>
+                </el-form>
+            </div>
+        </div>
+
+        <!-- 主页面 -->
+        <div v-else class="main-container">
+            <!-- 头部导航 -->
+            <el-header class="header">
+                <div class="header-left">
+                    <span class="logo">居家服务管理系统</span>
+                </div>
+                <div class="header-right">
+                    <span>欢迎，{{ adminInfo.name }}</span>
+                    <el-button type="text" @click="logout">退出登录</el-button>
+                </div>
+            </el-header>
+
+            <!-- 主要内容区 -->
+            <el-container>
+                <!-- 侧边栏导航 -->
+                <el-aside width="200px" class="aside">
+                    <el-menu default-active="1" class="el-menu-vertical-demo" @select="handleMenuSelect">
+                        <el-submenu index="1">
+                            <template slot="title">
+                                <i class="el-icon-s-order"></i>
+                                <span>订单管理</span>
+                            </template>
+                            <el-menu-item index="1-1">订单列表</el-menu-item>
+                        </el-submenu>
+                        <el-submenu index="2">
+                            <template slot="title">
+                                <i class="el-icon-user"></i>
+                                <span>用户管理</span>
+                            </template>
+                            <el-menu-item index="2-1">用户列表</el-menu-item>
+                        </el-submenu>
+                        <el-submenu index="3">
+                            <template slot="title">
+                                <i class="el-icon-user-solid"></i>
+                                <span>护工管理</span>
+                            </template>
+                            <el-menu-item index="3-1">护工列表</el-menu-item>
+                        </el-submenu>
+                        <el-submenu index="4">
+                            <template slot="title">
+                                <i class="el-icon-s-grid"></i>
+                                <span>服务配置</span>
+                            </template>
+                            <el-menu-item index="4-1">服务类型</el-menu-item>
+                        </el-submenu>
+                    </el-menu>
+                </el-aside>
+
+                <!-- 内容区域 -->
+                <el-main class="main-content">
+                    <!-- 订单管理页面 -->
+                    <div v-if="activeMenu === '1-1'">
+                        <div class="content-header">
+                            <h3>订单管理</h3>
+                        </div>
+                        <div class="content-body">
+                            <el-row :gutter="20" class="search-row">
+                                <el-col :span="6">
+                                    <el-input v-model="orderSearchForm.orderNo" placeholder="订单编号" clearable></el-input>
+                                </el-col>
+                                <el-col :span="6">
+                                    <el-input v-model="orderSearchForm.username" placeholder="用户名" clearable></el-input>
+                                </el-col>
+                                <el-col :span="6">
+                                    <el-input v-model="orderSearchForm.nurseName" placeholder="护工名" clearable></el-input>
+                                </el-col>
+                                <el-col :span="6">
+                                    <el-select v-model="orderSearchForm.serviceTypeId" placeholder="服务类型">
+                                        <el-option label="全部" value=""></el-option>
+                                        <el-option v-for="type in serviceTypeList" :key="type.id" :label="type.name" :value="type.id"></el-option>
+                                    </el-select>
+                                </el-col>
+                                <el-col :span="6">
+                                    <el-select v-model="orderSearchForm.status" placeholder="订单状态">
+                                        <el-option label="全部" value=""></el-option>
+                                        <el-option label="待派单" value="1"></el-option>
+                                        <el-option label="已派单" value="2"></el-option>
+                                        <el-option label="已接单" value="3"></el-option>
+                                        <el-option label="服务中" value="4"></el-option>
+                                        <el-option label="已完成" value="5"></el-option>
+                                        <el-option label="已取消" value="6"></el-option>
+                                        <el-option label="已拒绝" value="7"></el-option>
+                                    </el-select>
+                                </el-col>
+                                <el-col :span="6">
+                                    <el-button type="primary" @click="searchOrders">查询</el-button>
+                                </el-col>
+                            </el-row>
+                            <el-table :data="orderList" style="width: 100%">
+                                <el-table-column prop="orderNo" label="订单编号"></el-table-column>
+                                <el-table-column prop="userName" label="用户名"></el-table-column>
+                                <el-table-column prop="nurseName" label="护工名"></el-table-column>
+                                <el-table-column prop="serviceTypeName" label="服务类型"></el-table-column>
+                                <el-table-column prop="totalAmount" label="总金额"></el-table-column>
+                                <el-table-column prop="status" label="订单状态">
+                                    <template slot-scope="scope">
+                                        <el-tag v-if="scope.row.status === 1">待派单</el-tag>
+                                        <el-tag type="primary" v-else-if="scope.row.status === 2">已派单</el-tag>
+                                        <el-tag type="success" v-else-if="scope.row.status === 3">已接单</el-tag>
+        
+                                        <el-tag type="info" v-else-if="scope.row.status === 5">已完成</el-tag>
+                                        <el-tag type="danger" v-else-if="scope.row.status === 6">已取消</el-tag>
+                                        <el-tag v-else-if="scope.row.status === 7">已拒绝</el-tag>
+                                    </template>
+                                </el-table-column>
+                                <el-table-column prop="serviceAddress" label="服务地址"></el-table-column>
+                                <el-table-column label="服务时间">
+                                    <template slot-scope="scope">
+                                        <div v-html="formatServiceTime(scope.row.startTime, scope.row.endTime)"></div>
+                                    </template>
+                                </el-table-column>
+                                <el-table-column label="创建时间" width="160">
+                                    <template slot-scope="scope">
+                                        <div v-html="formatDateTime(scope.row.createTime)"></div>
+                                    </template>
+                                </el-table-column>
+                                <el-table-column label="操作" fixed="right">
+                                    <template slot-scope="scope">
+                                        <div class="operation-buttons">
+                                            <!-- 待派单(1)：编辑订单、指派护工、取消订单 -->
+                                            <template v-if="scope.row.status === 1">
+                                                <el-button type="primary" size="small" @click="editOrder(scope.row)">编辑</el-button>
+                                                <el-button type="success" size="small" @click="assignNurse(scope.row.id)">指派</el-button>
+                                                <el-button type="danger" size="small" @click="cancelOrder(scope.row.id)">取消</el-button>
+                                            </template>
+                                            <!-- 已派单(2)：编辑订单、重新指派护工、取消订单 -->
+                                            <template v-else-if="scope.row.status === 2">
+                                                <el-button type="primary" size="small" @click="editOrder(scope.row)">编辑</el-button>
+                                                <el-button type="success" size="small" @click="assignNurse(scope.row.id)">重指派</el-button>
+                                                <el-button type="danger" size="small" @click="cancelOrder(scope.row.id)">取消</el-button>
+                                            </template>
+                                            <!-- 已接单(3)：编辑订单、更新为已完成、取消订单 -->
+                                            <template v-else-if="scope.row.status === 3">
+                                                <el-button type="primary" size="small" @click="editOrder(scope.row)">编辑</el-button>
+                                                <el-button type="success" size="small" @click="completeOrder(scope.row.id)">完成</el-button>
+                                                <el-button type="danger" size="small" @click="cancelOrder(scope.row.id)">取消</el-button>
+                                            </template>
+                                            <!-- 已完成(5)：评价 -->
+                                            <template v-else-if="scope.row.status === 5">
+                                                <el-button type="info" size="small" @click="evaluateOrder(scope.row.id)">评价</el-button>
+                                            </template>
+                                            <!-- 已取消(6)：删除订单 -->
+                                            <template v-else-if="scope.row.status === 6">
+                                                <el-button type="danger" size="small" @click="deleteOrder(scope.row.id)">删除</el-button>
+                                            </template>
+                                            <!-- 已拒绝(7)：编辑订单、重新指派护工 -->
+                                            <template v-else-if="scope.row.status === 7">
+                                                <el-button type="primary" size="small" @click="editOrder(scope.row)">编辑</el-button>
+                                                <el-button type="success" size="small" @click="assignNurse(scope.row.id)">重指派</el-button>
+                                            </template>
+                                        </div>
+                                    </template>
+                                </el-table-column>
+                            </el-table>
+                            <div class="pagination-row">
+                                <el-pagination
+                                    background
+                                    layout="total, sizes, prev, pager, next, jumper"
+                                    :total="orderTotal"
+                                    v-model:current-page="orderCurrentPage"
+                                    v-model:page-size="orderPageSize"
+                                    @size-change="handleOrderSizeChange"
+                                    @current-change="handleOrderCurrentChange"
+                                >
+                                </el-pagination>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 用户管理页面 -->
+                    <div v-else-if="activeMenu === '2-1'">
+                        <div class="content-header">
+                            <h3>用户管理</h3>
+                        </div>
+                        <div class="content-body">
+                            <el-row :gutter="20" class="search-row">
+                                <el-col :span="6">
+                                    <el-input v-model="userSearchForm.phone" placeholder="手机号" clearable></el-input>
+                                </el-col>
+                                <el-col :span="6">
+                                    <el-input v-model="userSearchForm.name" placeholder="姓名" clearable></el-input>
+                                </el-col>
+                                <el-col :span="6">
+                                    <el-button type="primary" @click="searchUsers">查询</el-button>
+                                </el-col>
+                            </el-row>
+                            <el-table :data="userList" style="width: 100%">
+                                <el-table-column prop="id" label="用户ID" width="80"></el-table-column>
+                                <el-table-column prop="phone" label="手机号"></el-table-column>
+                                <el-table-column prop="name" label="姓名"></el-table-column>
+                                <el-table-column prop="address" label="地址"></el-table-column>
+                                <el-table-column prop="createTime" label="创建时间"></el-table-column>
+                            </el-table>
+                            <div class="pagination-row">
+                                <el-pagination
+                                    background
+                                    layout="total, sizes, prev, pager, next, jumper"
+                                    :total="userTotal"
+                                    v-model:current-page="userCurrentPage"
+                                    v-model:page-size="userPageSize"
+                                    @size-change="handleUserSizeChange"
+                                    @current-change="handleUserCurrentChange"
+                                >
+                                </el-pagination>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 护工管理页面 -->
+                    <div v-else-if="activeMenu === '3-1'">
+                        <div class="content-header">
+                            <h3>护工管理</h3>
+                        </div>
+                        <div class="content-body">
+                            <el-row :gutter="20" class="search-row">
+                                <el-col :span="6">
+                                    <el-input v-model="nurseSearchForm.phone" placeholder="手机号" clearable></el-input>
+                                </el-col>
+                                <el-col :span="6">
+                                    <el-input v-model="nurseSearchForm.name" placeholder="姓名" clearable></el-input>
+                                </el-col>
+                                <el-col :span="6">
+                                    <el-button type="primary" @click="searchNurses">查询</el-button>
+                                </el-col>
+                            </el-row>
+                            <el-table :data="nurseList" style="width: 100%">
+                                <el-table-column prop="id" label="护工ID" width="80"></el-table-column>
+                                <el-table-column prop="phone" label="手机号"></el-table-column>
+                                <el-table-column prop="name" label="姓名"></el-table-column>
+                                <el-table-column prop="age" label="年龄"></el-table-column>
+                                <el-table-column prop="serviceTypeName" label="服务类型">
+                                    <template slot-scope="scope">
+                                        {{ scope.row.serviceTypeName || '' }}
+                                    </template>
+                                </el-table-column>
+                                <el-table-column prop="status" label="状态">
+                                    <template slot-scope="scope">
+                                        <el-tag type="success" v-if="scope.row.status === 1">空闲</el-tag>
+                                        <el-tag type="warning" v-else-if="scope.row.status === 2">忙碌</el-tag>
+                                        <el-tag type="danger" v-else-if="scope.row.status === 3">离线</el-tag>
+                                    </template>
+                                </el-table-column>
+                                <el-table-column prop="rating" label="评分"></el-table-column>
+                                <el-table-column prop="serviceCount" label="服务次数"></el-table-column>
+                                <el-table-column label="操作" width="100">
+                                    <template slot-scope="scope">
+                                        <el-button type="primary" size="small" @click="editNurse(scope.row)">编辑</el-button>
+                                    </template>
+                                </el-table-column>
+                            </el-table>
+                            <div class="pagination-row">
+                                <el-pagination
+                                    background
+                                    layout="total, sizes, prev, pager, next, jumper"
+                                    :total="nurseTotal"
+                                    v-model:current-page="nurseCurrentPage"
+                                    v-model:page-size="nursePageSize"
+                                    @size-change="handleNurseSizeChange"
+                                    @current-change="handleNurseCurrentChange"
+                                >
+                                </el-pagination>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 服务类型管理页面 -->
+                    <div v-else-if="activeMenu === '4-1'">
+                        <div class="content-header">
+                            <h3>服务类型管理</h3>
+                            <el-button type="primary" @click="showAddServiceTypeDialog">添加服务类型</el-button>
+                        </div>
+                        <div class="content-body">
+                            <el-table :data="serviceTypeList" :key="'serviceTypeTable' + activeMenu" style="width: 100%">
+                                <el-table-column prop="id" label="服务类型ID" width="80"></el-table-column>
+                                <el-table-column prop="name" label="服务名称"></el-table-column>
+                                <el-table-column prop="description" label="服务描述"></el-table-column>
+                                <el-table-column prop="price" label="服务价格"></el-table-column>
+                                <el-table-column prop="duration" label="服务时长(分钟)"></el-table-column>
+                                <el-table-column prop="createTime" label="创建时间"></el-table-column>
+                                <el-table-column label="操作" width="150" fixed="right">
+                                    <template slot-scope="scope">
+                                        <el-button type="primary" size="small" @click="showEditServiceTypeDialog(scope.row)">编辑</el-button>
+                                        <el-button type="danger" size="small" @click="deleteServiceType(scope.row.id)">删除</el-button>
+                                    </template>
+                                </el-table-column>
+                            </el-table>
+                        </div>
+                    </div>
+                </el-main>
+            </el-container>
+        </div>
+
+        <!-- 指派护工对话框 -->
+        <el-dialog title="指派护工" :visible.sync="assignNurseDialogVisible" width="500px">
+            <el-form :model="assignNurseForm" :rules="assignNurseRules" ref="assignNurseForm">
+                <el-form-item label="服务类型" :label-width="formLabelWidth">
+                    <el-select v-model="assignNurseForm.serviceTypeId" placeholder="请选择服务类型" @change="getNursesWithAvailability">
+                        <el-option v-for="item in serviceTypeList" :key="item.id" :label="item.name" :value="item.id"></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="护工" :label-width="formLabelWidth">
+                    <el-select v-model="assignNurseForm.nurseId" placeholder="请选择护工">
+                        <el-option v-for="item in allNurseList" :key="item.id" :label="item.name + '(' + item.phone + ')' + ' - ' + (item.isFree ? '空闲' : '忙碌')" :value="item.id" :disabled="!item.isFree"></el-option>
+                    </el-select>
+                </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="assignNurseDialogVisible = false">取消</el-button>
+                <el-button type="primary" @click="confirmAssignNurse">确定</el-button>
+            </div>
+        </el-dialog>
+
+        <!-- 编辑护工对话框 -->
+        <el-dialog title="编辑护工信息" :visible.sync="editNurseDialogVisible" width="400px">
+            <el-form :model="editNurseForm" ref="editNurseForm">
+                <el-form-item label="服务类型" :label-width="formLabelWidth">
+                    <el-select v-model="editNurseForm.serviceTypeId" placeholder="请选择服务类型">
+                        <el-option v-for="item in serviceTypeList" :key="item.id" :label="item.name" :value="item.id"></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="状态" :label-width="formLabelWidth">
+                    <el-select v-model="editNurseForm.status" placeholder="请选择状态">
+                        <el-option label="空闲" :value="1"></el-option>
+                        <el-option label="忙碌" :value="2"></el-option>
+                        <el-option label="离线" :value="3"></el-option>
+                    </el-select>
+                </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="editNurseDialogVisible = false">取消</el-button>
+                <el-button type="primary" @click="submitEditNurse">确定</el-button>
+            </div>
+        </el-dialog>
+        
+        <!-- 更新订单状态对话框 -->
+        <el-dialog title="更新订单状态" :visible.sync="updateOrderStatusDialogVisible" width="400px">
+            <el-form :model="updateOrderStatusForm" :rules="updateOrderStatusRules" ref="updateOrderStatusForm">
+                <el-form-item label="当前状态" :label-width="formLabelWidth">
+                    <el-input v-model="updateOrderStatusForm.currentStatus" disabled></el-input>
+                </el-form-item>
+                <el-form-item label="新状态" :label-width="formLabelWidth">
+                    <el-select v-model="updateOrderStatusForm.newStatus" placeholder="请选择新状态">
+                        <el-option label="待派单" value="1" v-if="updateOrderStatusForm.currentStatus === '已取消' || updateOrderStatusForm.currentStatus === '已拒绝'"></el-option>
+                        <el-option label="已派单" value="2" v-if="updateOrderStatusForm.currentStatus === '待派单'"></el-option>
+                        <el-option label="已接单" value="3" v-if="updateOrderStatusForm.currentStatus === '已派单'"></el-option>
+                        <el-option label="服务中" value="4" v-if="updateOrderStatusForm.currentStatus === '已接单'"></el-option>
+                        <el-option label="已完成" value="5" v-if="updateOrderStatusForm.currentStatus === '服务中'"></el-option>
+                        <el-option label="已取消" value="6" v-if="updateOrderStatusForm.currentStatus !== '已完成' && updateOrderStatusForm.currentStatus !== '已取消' && updateOrderStatusForm.currentStatus !== '已拒绝'"></el-option>
+                        <el-option label="已拒绝" value="7" v-if="updateOrderStatusForm.currentStatus === '已派单'"></el-option>
+                    </el-select>
+                </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="updateOrderStatusDialogVisible = false">取消</el-button>
+                <el-button type="primary" @click="confirmUpdateOrderStatus">确定</el-button>
+            </div>
+        </el-dialog>
+
+        <!-- 添加服务类型对话框 -->
+        <el-dialog title="添加服务类型" :visible.sync="addServiceTypeDialogVisible" width="600px">
+            <el-form :model="addServiceTypeForm" :rules="addServiceTypeRules" ref="addServiceTypeForm">
+                <el-form-item label="服务名称" :label-width="formLabelWidth">
+                    <el-input v-model="addServiceTypeForm.name" placeholder="请输入服务名称"></el-input>
+                </el-form-item>
+                <el-form-item label="服务描述" :label-width="formLabelWidth">
+                    <el-input v-model="addServiceTypeForm.description" type="textarea" placeholder="请输入服务描述"></el-input>
+                </el-form-item>
+                <el-form-item label="服务价格" :label-width="formLabelWidth">
+                    <el-input v-model.number="addServiceTypeForm.price" placeholder="请输入服务价格"></el-input>
+                </el-form-item>
+                <el-form-item label="服务时长" :label-width="formLabelWidth">
+                    <el-input v-model.number="addServiceTypeForm.duration" placeholder="请输入服务时长(分钟)"></el-input>
+                </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="addServiceTypeDialogVisible = false">取消</el-button>
+                <el-button type="primary" @click="confirmAddServiceType">确定</el-button>
+            </div>
+        </el-dialog>
+
+        <!-- 编辑订单对话框 -->
+        <el-dialog title="编辑订单" :visible.sync="editOrderDialogVisible" width="600px">
+            <el-form :model="editOrderForm" :rules="editOrderRules" ref="editOrderForm">
+                <el-form-item label="订单编号" :label-width="formLabelWidth">
+                    <el-input v-model="editOrderForm.orderNo" disabled></el-input>
+                </el-form-item>
+                <el-form-item label="服务类型" :label-width="formLabelWidth" prop="serviceTypeId">
+                    <el-select v-model="editOrderForm.serviceTypeId" placeholder="请选择服务类型">
+                        <el-option v-for="item in serviceTypeList" :key="item.id" :label="item.name" :value="item.id"></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="服务开始时间" :label-width="formLabelWidth" prop="startTime">
+                    <el-date-picker
+                        v-model="editOrderForm.startTime"
+                        type="datetime"
+                        placeholder="选择日期时间"
+                        value-format="yyyy-MM-dd HH:mm:ss"
+                    ></el-date-picker>
+                </el-form-item>
+                <el-form-item label="服务结束时间" :label-width="formLabelWidth" prop="endTime">
+                    <el-date-picker
+                        v-model="editOrderForm.endTime"
+                        type="datetime"
+                        placeholder="选择日期时间"
+                        value-format="yyyy-MM-dd HH:mm:ss"
+                    ></el-date-picker>
+                </el-form-item>
+                <el-form-item label="服务地址" :label-width="formLabelWidth" prop="serviceAddress">
+                    <el-input v-model="editOrderForm.serviceAddress" placeholder="请输入服务地址"></el-input>
+                </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="editOrderDialogVisible = false">取消</el-button>
+                <el-button type="primary" @click="confirmEditOrder">确定</el-button>
+            </div>
+        </el-dialog>
+
+        <!-- 编辑服务类型对话框 -->
+        <el-dialog title="编辑服务类型" :visible.sync="editServiceTypeDialogVisible" width="600px">
+            <el-form :model="editServiceTypeForm" :rules="editServiceTypeRules" ref="editServiceTypeForm">
+                <el-form-item label="服务类型ID" :label-width="formLabelWidth">
+                    <el-input v-model="editServiceTypeForm.id" disabled></el-input>
+                </el-form-item>
+                <el-form-item label="服务名称" :label-width="formLabelWidth">
+                    <el-input v-model="editServiceTypeForm.name" placeholder="请输入服务名称"></el-input>
+                </el-form-item>
+                <el-form-item label="服务描述" :label-width="formLabelWidth">
+                    <el-input v-model="editServiceTypeForm.description" type="textarea" placeholder="请输入服务描述"></el-input>
+                </el-form-item>
+                <el-form-item label="服务价格" :label-width="formLabelWidth">
+                    <el-input v-model.number="editServiceTypeForm.price" placeholder="请输入服务价格"></el-input>
+                </el-form-item>
+                <el-form-item label="服务时长" :label-width="formLabelWidth">
+                    <el-input v-model.number="editServiceTypeForm.duration" placeholder="请输入服务时长(分钟)"></el-input>
+                </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="editServiceTypeDialogVisible = false">取消</el-button>
+                <el-button type="primary" @click="confirmEditServiceType">确定</el-button>
+            </div>
+        </el-dialog>
+    </div>
+
+    <!-- 引入Vue.js -->
+    <script src="https://unpkg.com/vue@2.6.14/dist/vue.js"></script>
+    <!-- 引入Element UI组件库 -->
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+    <!-- 引入axios用于HTTP请求 -->
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <!-- 引入自定义脚本 -->
+    <script src="js/app.js"></script>
+</body>
+</html>

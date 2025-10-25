@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.homemaker.mapper.OrderMapper">
+    
+    <resultMap id="OrderVOResultMap" type="com.homemaker.entity.OrderVO">
+        <id column="id" property="id"/>
+        <result column="order_no" property="orderNo"/>
+        <result column="user_id" property="userId"/>
+        <result column="user_name" property="userName"/>
+        <result column="nurse_id" property="nurseId"/>
+        <result column="nurse_name" property="nurseName"/>
+        <result column="service_type_id" property="serviceTypeId"/>
+        <result column="service_type_name" property="serviceTypeName"/>
+        <result column="total_amount" property="totalAmount"/>
+        <result column="status" property="status"/>
+        <result column="service_address" property="serviceAddress"/>
+        <result column="service_time" property="serviceTime"/>
+        <result column="payment_time" property="paymentTime"/>
+        <result column="start_time" property="startTime"/>
+        <result column="end_time" property="endTime"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+    
+    <select id="selectOrderListWithDetails" resultMap="OrderVOResultMap">
+        SELECT 
+            o.id,
+            o.order_no,
+            o.user_id,
+            u.name AS user_name,
+            o.nurse_id,
+            n.name AS nurse_name,
+            o.service_type_id,
+            st.name AS service_type_name,
+            o.total_amount,
+            o.status,
+            o.service_address,
+            o.service_time,
+            o.payment_time,
+            o.start_time,
+            o.end_time,
+            o.create_time,
+            o.update_time
+        FROM 
+            `order` o
+        LEFT JOIN 
+            user u ON o.user_id = u.id
+        LEFT JOIN 
+            nurse n ON o.nurse_id = n.id
+        LEFT JOIN 
+            service_type st ON o.service_type_id = st.id
+        <where>
+            <if test="params.userId != null">
+                AND o.user_id = #{params.userId}
+            </if>
+            <if test="params.status != null">
+                AND o.status = #{params.status}
+            </if>
+            <if test="params.statusList != null">
+                AND o.status in  ${params.statusList}
+            </if>
+            <if test="params.orderNo != null and params.orderNo != ''">
+                AND o.order_no LIKE CONCAT('%', #{params.orderNo}, '%')
+            </if>
+            <if test="params.username != null and params.username != ''">
+                AND u.name LIKE CONCAT('%', #{params.username}, '%')
+            </if>
+            <if test="params.nurseName != null and params.nurseName != ''">
+                AND n.name LIKE CONCAT('%', #{params.nurseName}, '%')
+            </if>
+            <if test="params.serviceTypeId != null">
+                AND o.service_type_id = #{params.serviceTypeId}
+            </if>
+        </where>
+        ORDER BY 
+            o.create_time DESC
+    </select>
+</mapper>

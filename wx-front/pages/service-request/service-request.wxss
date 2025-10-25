@@ -1,0 +1,164 @@
+/* service-request.wxss */
+
+/* 页面容器 */
+.container {
+  padding: 0 10rpx;
+  background-color: #fff;
+  min-height: 100vh;
+}
+
+/* 页面标题 */
+.page-title {
+  text-align: center;
+  font-size: 40rpx;
+  font-weight: bold;
+  color: #333;
+  padding: 20rpx 0;
+  border-bottom: 1rpx solid #f0f0f0;
+  margin: 0;
+}
+
+/* 服务信息卡片 */
+.service-card {
+  background-color: #fff;
+  padding: 20rpx 10rpx;
+  margin: 0;
+  border-bottom: 1rpx solid #f0f0f0;
+  width: 300px;
+}
+
+.service-info {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.info-label {
+  font-size: 32rpx;
+  color: #666;
+}
+
+.info-value {
+  font-size: 32rpx;
+  color: #333;
+  font-weight: 500;
+}
+
+.info-value.price {
+  color: #ff4d4f;
+  font-size: 36rpx;
+  font-weight: bold;
+}
+
+/* 表单容器 */
+.form-container {
+  background-color: #fff;
+  padding: 20rpx 10rpx;
+  margin: 0;
+  width: 300px;
+}
+
+.form-item {
+  margin-bottom: 30rpx;
+}
+
+.form-item:last-child {
+  margin-bottom: 0;
+}
+
+.form-label {
+  display: block;
+  font-size: 32rpx;
+  color: #333;
+  margin-bottom: 10rpx;
+  font-weight: 500;
+}
+
+.form-input {
+  width: 100%;
+  min-height: 160rpx;
+  padding: 20rpx;
+  border: 1rpx solid #e8e8e8;
+  border-radius: 10rpx;
+  font-size: 32rpx;
+  color: #333;
+  background-color: #fafafa;
+  box-sizing: border-box;
+  resize: none;
+}
+
+.form-input:focus {
+  border-color: #667eea;
+  background-color: #fff;
+}
+
+.form-input::placeholder {
+  color: #999;
+}
+
+.form-picker {
+  height: 90rpx;
+  padding: 0 20rpx;
+  border: 1rpx solid #e8e8e8;
+  border-radius: 10rpx;
+  background-color: #fafafa;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+}
+
+/* 时间选择器组 */
+.time-picker-group {
+  display: flex;
+  gap: 20rpx;
+  width: 100%;
+}
+
+/* 日期选择器样式 */
+.date-picker {
+  flex: 1.2;
+}
+
+/* 时间选择器样式 */
+.time-picker {
+  flex: 0.8;
+}
+
+.picker-content {
+  font-size: 32rpx;
+  color: #333;
+}
+
+/* 样式优化后的服务申请页面 */
+
+/* 按钮容器 */
+.btn-container {
+  margin-top: 30rpx;
+  padding: 0 10rpx 40rpx;
+}
+
+.submit-btn {
+  width: 100%;
+  height: 90rpx;
+  line-height: 90rpx;
+  font-size: 34rpx;
+  font-weight: 500;
+  background-color: #667eea;
+  border-radius: 45rpx;
+  color: #fff;
+  border: none;
+}
+
+.submit-btn:active {
+  opacity: 0.8;
+}
+
+.submit-btn[disabled] {
+  opacity: 0.6;
+}

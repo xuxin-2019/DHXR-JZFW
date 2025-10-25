@@ -1,0 +1,93 @@
+<!-- 修改个人信息页面 -->
+<view class="container">
+  <!-- 页面标题 -->
+  <view class="page-header">
+    <text class="page-title">修改个人信息</text>
+    <text class="role-info">当前角色：{{roleText}}</text>
+  </view>
+
+  <!-- 表单区域 -->
+  <view class="form-container">
+    <!-- 通用字段：姓名 -->
+    <view class="form-item">
+      <view class="form-label">姓名</view>
+      <input 
+        class="form-input" 
+        placeholder="请输入姓名"
+        value="{{formData.name}}"
+        data-field="name"
+        bindinput="onInput"
+      />
+    </view>
+
+    <!-- 通用字段：电话 -->
+    <view class="form-item">
+      <view class="form-label">电话</view>
+      <input 
+        class="form-input" 
+        placeholder="请输入手机号码"
+        value="{{formData.phone}}"
+        data-field="phone"
+        bindinput="onInput"
+        type="number"
+        maxlength="11"
+      />
+    </view>
+
+    <!-- 用户角色特有字段：地址 -->
+    <view class="form-item" wx:if="{{userRole === '1'}}">
+      <view class="form-label">地址</view>
+      <input 
+        class="form-input" 
+        placeholder="请输入详细地址"
+        value="{{formData.address}}"
+        data-field="address"
+        bindinput="onInput"
+      />
+    </view>
+
+    <!-- 护工角色特有字段 -->
+    <block wx:if="{{userRole === '2'}}">
+      <!-- 年龄 -->
+      <view class="form-item">
+        <view class="form-label">年龄</view>
+        <input 
+          class="form-input" 
+          placeholder="请输入年龄"
+          value="{{formData.age}}"
+          data-field="age"
+          bindinput="onInput"
+          type="number"
+        />
+      </view>
+
+      <!-- 服务类型 -->
+      <view class="form-item">
+        <view class="form-label">服务类型</view>
+        <picker 
+          class="form-picker"
+          bindchange="onInput" 
+          data-field="serviceTypeId"
+          value="{{serviceTypeIdIndex}}"
+          range="{{serviceTypes}}"
+          range-key="name"
+        >
+          <view class="picker-display">
+            {{formData.serviceTypeId ? getServiceTypeName(formData.serviceTypeId) : '请选择服务类型'}}
+          </view>
+        </picker>
+      </view>
+    </block>
+  </view>
+
+  <!-- 提交按钮 -->
+  <view class="button-section">
+    <button 
+      class="submit-button" 
+      bindtap="submitForm" 
+      disabled="{{isSubmitting}}"
+    >
+      {{isSubmitting ? '提交中...' : '保存修改'}}
+    </button>
+  </view>
+</view>

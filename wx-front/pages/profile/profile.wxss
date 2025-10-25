@@ -1,0 +1,193 @@
+/* 个人中心页面样式 */
+.container {
+  width: 100%;
+  min-height: 100vh;
+  background-color: #f8f8f8;
+  padding-bottom: 100rpx; /* 为底部菜单留出空间 */
+}
+
+/* 加载状态样式 */
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 400rpx;
+}
+
+.loading-text {
+  font-size: 32rpx;
+  color: #999;
+}
+
+/* 用户信息区域 */
+.user-info-section {
+  width: 100%;
+  padding: 30rpx;
+  box-sizing: border-box;
+}
+
+/* 用户头像和基本信息 */
+.user-header {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border-radius: 20rpx;
+  padding: 40rpx;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.05);
+  margin-bottom: 30rpx;
+}
+
+.avatar-container {
+  margin-right: 30rpx;
+}
+
+.avatar {
+  width: 160rpx;
+  height: 160rpx;
+  border-radius: 50%;
+  background-color: #eee;
+}
+
+.user-basic-info {
+  flex: 1;
+}
+
+.user-name {
+  font-size: 40rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10rpx;
+  display: block;
+}
+
+.user-meta {
+  font-size: 28rpx;
+  color: #666;
+  line-height: 40rpx;
+}
+
+.user-phone {
+  display: block;
+  margin-bottom: 8rpx;
+}
+
+.user-role {
+  display: block;
+}
+
+/* 功能按钮区域 */
+.button-section {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+  margin-bottom: 30rpx;
+}
+
+.primary-button {
+  background-color: #3199ff;
+  color: #fff;
+  border-radius: 10rpx;
+  font-size: 32rpx;
+  line-height: 90rpx;
+  height: 90rpx;
+}
+
+.primary-button:active {
+  background-color: #1a88e5;
+}
+
+.secondary-button {
+  background-color: #fff;
+  color: #333;
+  border: 1rpx solid #e0e0e0;
+  border-radius: 10rpx;
+  font-size: 32rpx;
+  line-height: 90rpx;
+  height: 90rpx;
+}
+
+.secondary-button:active {
+  background-color: #f5f5f5;
+}
+
+/* 用户详细信息区域 */
+.user-details-section {
+  background: #fff;
+  border-radius: 20rpx;
+  padding: 30rpx;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.05);
+}
+
+.detail-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 25rpx 0;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+.detail-item:last-child {
+  border-bottom: none;
+}
+
+.detail-label {
+  font-size: 30rpx;
+  color: #666;
+}
+
+.detail-value {
+  font-size: 30rpx;
+  color: #333;
+  text-align: right;
+  flex: 1;
+  margin-left: 20rpx;
+  word-break: break-all;
+}
+
+/* 自定义底部导航栏样式 */
+.custom-tab-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100rpx;
+  background-color: #ffffff;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  box-shadow: 0 -2rpx 10rpx rgba(0, 0, 0, 0.1);
+  z-index: 998;
+}
+
+/* 单个导航项样式 */
+.tab-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  height: 100%;
+}
+
+/* 导航图标样式 */
+.tab-icon {
+  font-size: 40rpx;
+  margin-bottom: 8rpx;
+}
+
+/* 导航文字样式 */
+.tab-text {
+  font-size: 24rpx;
+  color: #999999;
+}
+
+/* 选中状态样式 */
+.tab-item.active .tab-text {
+  color: #1AAD19;
+  font-weight: bold;
+}
+
+/* 页面内容底部内边距，避免被底部导航栏遮挡 */
+.container {
+  padding-bottom: 120rpx;
+}

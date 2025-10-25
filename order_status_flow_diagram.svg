@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="1200" height="800" viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+    <title>家政服务系统订单状态与操作流程图</title>
+    
+    <!-- 背景和标题 -->
+    <rect width="1200" height="800" fill="#f9f9f9"/>
+    <text x="600" y="30" font-family="Arial" font-size="24" text-anchor="middle" fill="#333" font-weight="bold">家政服务系统订单状态与操作流程图</text>
+    
+    <!-- 定义箭头标记 -->
+    <defs>
+        <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#333"/>
+        </marker>
+    </defs>
+    
+    <!-- 订单状态框 -->
+    <!-- 待派单 -->
+    <rect x="150" y="120" width="180" height="80" rx="10" ry="10" fill="#e6f3ff" stroke="#3366cc" stroke-width="2"/>
+    <text x="240" y="150" font-family="Arial" font-size="18" text-anchor="middle" fill="#333" font-weight="bold">待派单</text>
+    <text x="240" y="180" font-family="Arial" font-size="14" text-anchor="middle" fill="#666">状态码: 1</text>
+    
+    <!-- 已派单 -->
+    <rect x="450" y="120" width="180" height="80" rx="10" ry="10" fill="#fff0e6" stroke="#ff6633" stroke-width="2"/>
+    <text x="540" y="150" font-family="Arial" font-size="18" text-anchor="middle" fill="#333" font-weight="bold">已派单</text>
+    <text x="540" y="180" font-family="Arial" font-size="14" text-anchor="middle" fill="#666">状态码: 2</text>
+    
+    <!-- 已接单 -->
+    <rect x="750" y="120" width="180" height="80" rx="10" ry="10" fill="#e6ffe6" stroke="#33cc33" stroke-width="2"/>
+    <text x="840" y="150" font-family="Arial" font-size="18" text-anchor="middle" fill="#333" font-weight="bold">已接单</text>
+    <text x="840" y="180" font-family="Arial" font-size="14" text-anchor="middle" fill="#666">状态码: 3</text>
+    
+    <!-- 已完成 -->
+    <rect x="150" y="320" width="180" height="80" rx="10" ry="10" fill="#d1f0c6" stroke="#009933" stroke-width="2"/>
+    <text x="240" y="350" font-family="Arial" font-size="18" text-anchor="middle" fill="#333" font-weight="bold">已完成</text>
+    <text x="240" y="380" font-family="Arial" font-size="14" text-anchor="middle" fill="#666">状态码: 5</text>
+    
+    <!-- 已取消 -->
+    <rect x="450" y="320" width="180" height="80" rx="10" ry="10" fill="#ffe6e6" stroke="#cc3333" stroke-width="2"/>
+    <text x="540" y="350" font-family="Arial" font-size="18" text-anchor="middle" fill="#333" font-weight="bold">已取消</text>
+    <text x="540" y="380" font-family="Arial" font-size="14" text-anchor="middle" fill="#666">状态码: 6</text>
+    
+    <!-- 已拒绝 -->
+    <rect x="750" y="320" width="180" height="80" rx="10" ry="10" fill="#fff0cc" stroke="#ffcc00" stroke-width="2"/>
+    <text x="840" y="350" font-family="Arial" font-size="18" text-anchor="middle" fill="#333" font-weight="bold">已拒绝</text>
+    <text x="840" y="380" font-family="Arial" font-size="14" text-anchor="middle" fill="#666">状态码: 7</text>
+    
+    <!-- 状态转换线 -->
+    <!-- 待派单 -> 已派单 -->
+    <line x1="330" y1="160" x2="450" y2="160" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <rect x="380" y="145" width="40" height="30" rx="5" ry="5" fill="white" stroke="#333" stroke-width="1"/>
+    <text x="400" y="165" font-family="Arial" font-size="12" text-anchor="middle" fill="#333">指派</text>
+    
+    <!-- 已派单 -> 已接单 -->
+    <line x1="630" y1="160" x2="750" y2="160" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <rect x="680" y="145" width="40" height="30" rx="5" ry="5" fill="white" stroke="#333" stroke-width="1"/>
+    <text x="700" y="165" font-family="Arial" font-size="12" text-anchor="middle" fill="#333">接单</text>
+    
+    <!-- 已接单 -> 已完成 -->
+    <path d="M840 200 C950 200 950 350 240 350" stroke="#333" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+    <rect x="900" y="250" width="60" height="30" rx="5" ry="5" fill="white" stroke="#333" stroke-width="1"/>
+    <text x="930" y="270" font-family="Arial" font-size="12" text-anchor="middle" fill="#333">完成</text>
+    
+    <!-- 待派单 -> 已取消 -->
+    <path d="M240 200 C240 250 450 280 540 350" stroke="#333" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+    <rect x="340" y="250" width="60" height="30" rx="5" ry="5" fill="white" stroke="#333" stroke-width="1"/>
+    <text x="370" y="270" font-family="Arial" font-size="12" text-anchor="middle" fill="#333">取消</text>
+    
+    <!-- 已派单 -> 已取消 -->
+    <line x1="540" y1="200" x2="540" y2="320" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)"/>
+    
+    <!-- 已接单 -> 已取消 -->
+    <path d="M840 200 C840 250 650 280 540 350" stroke="#333" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+    <rect x="740" y="250" width="60" height="30" rx="5" ry="5" fill="white" stroke="#333" stroke-width="1"/>
+    <text x="770" y="270" font-family="Arial" font-size="12" text-anchor="middle" fill="#333">取消</text>
+    
+    <!-- 已派单 -> 已拒绝 -->
+    <path d="M630 180 C700 250 750 280 750 320" stroke="#333" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+    <rect x="680" y="240" width="60" height="30" rx="5" ry="5" fill="white" stroke="#333" stroke-width="1"/>
+    <text x="710" y="260" font-family="Arial" font-size="12" text-anchor="middle" fill="#333">拒绝</text>
+    
+    <!-- 已拒绝 -> 已派单 (重新指派) -->
+    <path d="M750 360 C650 280 550 250 450 180" stroke="#333" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+    <rect x="550" y="280" width="100" height="30" rx="5" ry="5" fill="white" stroke="#333" stroke-width="1"/>
+    <text x="600" y="300" font-family="Arial" font-size="12" text-anchor="middle" fill="#333">重新指派</text>
+    
+    <!-- 操作按钮说明区域 -->
+    <rect x="100" y="450" width="1000" height="300" rx="10" ry="10" fill="white" stroke="#ccc" stroke-width="1"/>
+    <text x="600" y="480" font-family="Arial" font-size="20" text-anchor="middle" fill="#333" font-weight="bold">各状态可用操作按钮说明</text>
+    
+    <!-- 待派单操作 -->
+    <text x="240" y="520" font-family="Arial" font-size="16" text-anchor="middle" fill="#3366cc" font-weight="bold">待派单 (1) 可用操作:</text>
+    <rect x="120" y="530" width="80" height="30" rx="5" ry="5" fill="#e6f3ff" stroke="#3366cc" stroke-width="1"/>
+    <text x="160" y="550" font-family="Arial" font-size="12" text-anchor="middle" fill="#333">指派护工</text>
+    
+    <rect x="220" y="530" width="80" height="30" rx="5" ry="5" fill="#e6f3ff" stroke="#3366cc" stroke-width="1"/>
+    <text x="260" y="550" font-family="Arial" font-size="12" text-anchor="middle" fill="#333">编辑订单</text>
+    
+    <rect x="320" y="530" width="80" height="30" rx="5" ry="5" fill="#e6f3ff" stroke="#3366cc" stroke-width="1"/>
+    <text x="360" y="550" font-family="Arial" font-size="12" text-anchor="middle" fill="#333">取消订单</text>
+    
+    <!-- 已派单操作 -->
+    <text x="540" y="520" font-family="Arial" font-size="16" text-anchor="middle" fill="#ff6633" font-weight="bold">已派单 (2) 可用操作:</text>
+    <rect x="420" y="530" width="80" height="30" rx="5" ry="5" fill="#fff0e6" stroke="#ff6633" stroke-width="1"/>
+    <text x="460" y="550" font-family="Arial" font-size="12" text-anchor="middle" fill="#333">编辑订单</text>
+    
+    <rect x="520" y="530" width="120" height="30" rx="5" ry="5" fill="#fff0e6" stroke="#ff6633" stroke-width="1"/>
+    <text x="580" y="550" font-family="Arial" font-size="12" text-anchor="middle" fill="#333">重新指派护工</text>
+    
+    <rect x="660" y="530" width="80" height="30" rx="5" ry="5" fill="#fff0e6" stroke="#ff6633" stroke-width="1"/>
+    <text x="700" y="550" font-family="Arial" font-size="12" text-anchor="middle" fill="#333">取消订单</text>
+    
+    <!-- 已接单操作 -->
+    <text x="840" y="520" font-family="Arial" font-size="16" text-anchor="middle" fill="#33cc33" font-weight="bold">已接单 (3) 可用操作:</text>
+    <rect x="720" y="530" width="80" height="30" rx="5" ry="5" fill="#e6ffe6" stroke="#33cc33" stroke-width="1"/>
+    <text x="760" y="550" font-family="Arial" font-size="12" text-anchor="middle" fill="#333">编辑订单</text>
+    
+    <rect x="820" y="530" width="120" height="30" rx="5" ry="5" fill="#e6ffe6" stroke="#33cc33" stroke-width="1"/>
+    <text x="880" y="550" font-family="Arial" font-size="12" text-anchor="middle" fill="#333">更新为已完成</text>
+    
+    <rect x="960" y="530" width="80" height="30" rx="5" ry="5" fill="#e6ffe6" stroke="#33cc33" stroke-width="1"/>
+    <text x="1000" y="550" font-family="Arial" font-size="12" text-anchor="middle" fill="#333">取消订单</text>
+    
+    <!-- 已完成操作 -->
+    <text x="240" y="620" font-family="Arial" font-size="16" text-anchor="middle" fill="#009933" font-weight="bold">已完成 (5) 可用操作:</text>
+    <rect x="180" y="630" width="120" height="30" rx="5" ry="5" fill="#d1f0c6" stroke="#009933" stroke-width="1"/>
+    <text x="240" y="650" font-family="Arial" font-size="12" text-anchor="middle" fill="#333">评价</text>
+    
+    <!-- 已取消操作 -->
+    <text x="540" y="620" font-family="Arial" font-size="16" text-anchor="middle" fill="#cc3333" font-weight="bold">已取消 (6) 可用操作:</text>
+    <rect x="480" y="630" width="120" height="30" rx="5" ry="5" fill="#ffe6e6" stroke="#cc3333" stroke-width="1"/>
+    <text x="540" y="650" font-family="Arial" font-size="12" text-anchor="middle" fill="#333">删除订单</text>
+    
+    <!-- 已拒绝操作 -->
+    <text x="840" y="620" font-family="Arial" font-size="16" text-anchor="middle" fill="#ffcc00" font-weight="bold">已拒绝 (7) 可用操作:</text>
+    <rect x="780" y="630" width="80" height="30" rx="5" ry="5" fill="#fff0cc" stroke="#ffcc00" stroke-width="1"/>
+    <text x="820" y="650" font-family="Arial" font-size="12" text-anchor="middle" fill="#333">编辑订单</text>
+    
+    <rect x="880" y="630" width="120" height="30" rx="5" ry="5" fill="#fff0cc" stroke="#ffcc00" stroke-width="1"/>
+    <text x="940" y="650" font-family="Arial" font-size="12" text-anchor="middle" fill="#333">重新指派护工</text>
+    
+    <!-- 注意事项 -->
+    <text x="600" y="720" font-family="Arial" font-size="14" text-anchor="middle" fill="#666" font-style="italic">注：已拒绝状态的订单不允许删除操作</text>
+    <text x="600" y="750" font-family="Arial" font-size="14" text-anchor="middle" fill="#666" font-style="italic">箭头表示订单状态转换方向，矩形框内标注触发转换的操作</text>
+</svg>

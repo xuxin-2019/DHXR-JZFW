@@ -1,0 +1,205 @@
+/* login.wxss */
+/* 页面容器样式 - 减少留白 */
+.container {
+  width: 100%;
+  min-height: 100vh;
+  background-color: #f8f8f8;
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  padding-top: 80rpx; /* 适当的顶部间距 */
+  flex-direction: column;
+}
+
+/* 标题样式 - 与首页保持一致 */
+.header {
+  text-align: center;
+  margin-bottom: 20rpx;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.title {
+  font-size: 44rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 0;
+}
+
+/* 表单容器样式 - 减少留白 */
+.form-container {
+  width: 90%;
+  max-width: 600rpx;
+  background-color: #fff;
+  border-radius: 16rpx;
+  padding: 30rpx;
+  box-shadow: 0 6rpx 24rpx rgba(0, 0, 0, 0.12);
+  box-sizing: border-box;
+  align-self: center;
+}
+
+/* 用户信息区域样式 */
+.user-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 25rpx;
+  padding-bottom: 20rpx;
+  border-bottom: 2rpx solid #f0f0f0;
+}
+
+.avatar {
+  width: 140rpx;
+  height: 140rpx;
+  border-radius: 70rpx;
+  margin-bottom: 12rpx;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
+}
+
+.nickname {
+  font-size: 34rpx;
+  color: #333;
+}
+
+/* 表单组样式 - 减少留白 */
+.form-group {
+  margin-bottom: 25rpx;
+}
+
+.form-item {
+  margin-bottom: 20rpx;
+}
+
+/* 标签样式 */
+.label {
+  display: block;
+  font-size: 28rpx;
+  color: #666;
+  margin-bottom: 12rpx;
+}
+
+/* 必填字段红色星号 */
+.required {
+  color: #e64340;
+  margin-left: 2rpx;
+}
+
+/* 输入框样式 - 更现代化 */
+.input {
+  width: 100%;
+  height: 88rpx;
+  border: 1rpx solid #ddd;
+  border-radius: 12rpx;
+  padding: 0 24rpx;
+  box-sizing: border-box;
+  font-size: 30rpx;
+  color: #333;
+  transition: border-color 0.3s;
+}
+
+.input:focus {
+  border-color: #667eea;
+}
+
+/* Picker样式 */
+.picker {
+  width: 100%;
+  height: 88rpx;
+  border: 1rpx solid #ddd;
+  border-radius: 12rpx;
+  padding: 0 24rpx;
+  box-sizing: border-box;
+  font-size: 30rpx;
+  background-color: #fff;
+  display: flex;
+  align-items: center;
+  color: #666;
+  position: relative;
+}
+
+.picker::after {
+  content: '';
+  position: absolute;
+  right: 24rpx;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-left: 14rpx solid transparent;
+  border-right: 14rpx solid transparent;
+  border-top: 14rpx solid #999;
+}
+
+/* 单选按钮组样式 */
+.radio-group {
+  display: flex;
+  gap: 40rpx;
+  align-items: center;
+  padding: 10rpx 0;
+}
+
+.radio-group label {
+  display: flex;
+  align-items: center;
+  font-size: 30rpx;
+  color: #333;
+}
+
+.radio-group radio {
+  margin-right: 10rpx;
+  transform: scale(1.1);
+}
+
+/* 提交按钮样式 - 与首页保持一致的渐变色 */
+.submit-btn {
+  width: 100%;
+  height: 90rpx;
+  line-height: 90rpx;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+  font-size: 34rpx;
+  font-weight: bold;
+  border-radius: 45rpx;
+  margin-top: 30rpx;
+  box-shadow: 0 6rpx 16rpx rgba(102, 126, 234, 0.3);
+  transition: opacity 0.3s, transform 0.2s;
+}
+
+.submit-btn:active {
+  opacity: 0.9;
+  transform: scale(0.98);
+}
+
+.submit-btn[disabled] {
+  background: #ccc;
+  box-shadow: none;
+}
+
+/* 错误信息样式 */
+.error-message {
+  display: block;
+  margin-top: 20rpx;
+  font-size: 26rpx;
+  color: #e64340;
+  text-align: center;
+}
+
+/* 添加一些额外的美化效果 */
+.form-container {
+  background: #fff;
+  position: relative;
+  overflow: hidden;
+}
+
+/* 表单容器顶部装饰线 */
+.form-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 8rpx;
+  background: linear-gradient(90deg, #667eea, #764ba2);
+}

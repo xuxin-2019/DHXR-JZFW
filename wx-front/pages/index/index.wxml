@@ -1,0 +1,80 @@
+<!--index.wxml-->
+<view class="container">
+  <!-- 登录按钮 -->
+  <view class="header">
+    <button class="login-btn" bindtap="handleLogin">登录</button>
+  </view>
+
+  <!-- 页面标题 -->
+  <view class="page-title">
+    <text>家政服务</text>
+  </view>
+
+  <!-- 模块1：服务类型 -->
+  <view class="service-types">
+    <view class="section-title">服务类型</view>
+    <view class="types-container">
+      <view class="service-type" wx:for="{{serviceTypes}}" wx:key="id" bindtap="selectServiceType" data-id="{{item.id}}">
+        <view class="type-icon" style="background-color: {{item.color}}">
+          <text class="icon-text">{{item.icon}}</text>
+        </view>
+        <text class="type-name">{{item.name}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 模块2：服务内容介绍 -->
+  <view class="service-content">
+    <view class="section-title">服务内容</view>
+    <view class="content-table">
+      <view class="table-header">
+        <view class="header-cell">服务类型</view>
+        <view class="header-cell">详细内容</view>
+        <view class="header-cell">价格</view>
+      </view>
+      <view class="table-body">
+        <view class="table-row" wx:for="{{serviceDetails}}" wx:key="id">
+          <view class="table-cell">{{item.name}}</view>
+          <view class="table-cell detail-cell">{{item.details}}</view>
+          <view class="table-cell price-cell">{{item.price}}</view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 模块3：用户评价 -->
+  <view class="user-reviews">
+    <view class="section-title">用户评价</view>
+    <view class="review-list">
+      <view class="review-item" wx:for="{{reviews}}" wx:key="id">
+        <view class="review-header">
+          <view class="reviewer-avatar">{{item.avatar}}</view>
+          <view class="reviewer-info">
+            <text class="reviewer-name">{{item.name}}</text>
+            <text class="review-date">{{item.date}}</text>
+          </view>
+          <view class="review-rating">
+            <text class="star" wx:for="{{item.rating}}" wx:key="*this">★</text>
+          </view>
+        </view>
+        <text class="review-content">{{item.content}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 自定义底部导航栏 -->
+  <view class="custom-tab-bar">
+    <view class="tab-item active" bindtap="navigateToPage" data-page="pages/index/index">
+      <view class="tab-icon">🏠</view>
+      <text class="tab-text">首页</text>
+    </view>
+    <view class="tab-item" bindtap="navigateToPage" data-page="pages/orders/orders">
+      <view class="tab-icon">📋</view>
+      <text class="tab-text">订单</text>
+    </view>
+    <view class="tab-item" bindtap="navigateToPage" data-page="pages/profile/profile">
+      <view class="tab-icon">👤</view>
+      <text class="tab-text">我的</text>
+    </view>
+  </view>
+</view>

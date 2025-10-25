@@ -1,0 +1,173 @@
+/* 全局样式重置 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    background-color: #f0f2f5;
+}
+
+/* 登录页面样式 */
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f0f2f5;
+}
+
+.login-form {
+    width: 400px;
+    padding: 20px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+}
+
+.login-form h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #303133;
+}
+
+/* 主页面布局样式 */
+.main-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    height: 60px;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.header-left .logo {
+    font-size: 20px;
+    font-weight: bold;
+    color: #1890ff;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.aside {
+    background-color: #fff;
+    box-shadow: 2px 0 6px rgba(0, 0, 0, 0.05);
+}
+
+.main-content {
+    padding: 20px;
+    background-color: #f0f2f5;
+    overflow-y: auto;
+}
+
+/* 内容区域样式 */
+.content-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 10px 0;
+}
+
+.content-header h3 {
+    font-size: 18px;
+    color: #303133;
+}
+
+.content-body {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* 搜索区域样式 */
+.search-row {
+    margin-bottom: 20px;
+}
+
+/* 表格样式 */
+.el-table {
+    margin-bottom: 20px;
+}
+
+/* 操作按钮容器样式 */
+.operation-buttons {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+}
+
+/* Element UI按钮调整 */
+.operation-buttons .el-button--small {
+    padding: 5px 10px;
+    font-size: 12px;
+    line-height: 1;
+    min-width: 60px;
+    border-radius: 4px;
+    margin: 0;
+}
+
+/* 操作列宽度调整 */
+.el-table__fixed-right {
+    width: auto !important;
+    min-width: 180px;
+    white-space: normal !important;
+}
+
+/* 分页区域样式 */
+.pagination-row {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+}
+
+/* 对话框样式 */
+.dialog-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .login-form {
+        width: 90%;
+        margin: 0 10px;
+    }
+    
+    .main-container {
+        flex-direction: column;
+    }
+    
+    .aside {
+        display: none;
+    }
+    
+    .header {
+        padding: 0 10px;
+    }
+    
+    .main-content {
+        padding: 10px;
+    }
+    
+    .content-body {
+        padding: 10px;
+    }
+}
