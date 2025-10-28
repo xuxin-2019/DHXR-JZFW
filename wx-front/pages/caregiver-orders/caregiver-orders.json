@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "护工订单",
+  "navigationBarBackgroundColor": "#ffffff",
+  "navigationBarTextStyle": "black",
+  "enablePullDownRefresh": true,
+  "backgroundTextStyle": "dark",
+  "backgroundColor": "#f8f8f8",
+  "usingComponents": {}
+}

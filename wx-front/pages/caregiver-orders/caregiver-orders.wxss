@@ -1,0 +1,337 @@
+/* caregiver-orders.wxss */
+
+/* 页面容器样式 */
+.container {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #f8f8f8;
+  padding-bottom: 100rpx; /* 为底部菜单留出空间 */
+  padding-top: 90rpx; /* 为固定的tab栏留出空间 */
+}
+
+/* Tab栏样式 - 固定在页面顶部 */
+.tab-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  background-color: white;
+  border-bottom: 1rpx solid #f0f0f0;
+  padding: 0 10rpx;
+  z-index: 99;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.05);
+}
+
+.tab-item {
+  flex: 1;
+  position: relative;
+  padding: 30rpx 0;
+  text-align: center;
+}
+
+.tab-text {
+  font-size: 32rpx;
+  color: #666;
+  transition: color 0.3s;
+}
+
+.tab-item.active .tab-text {
+  color: #667eea;
+  font-weight: bold;
+}
+
+.tab-indicator {
+  position: absolute;
+  bottom: 0;
+  left: 25%;
+  width: 50%;
+  height: 4rpx;
+  background-color: #667eea;
+  border-radius: 2rpx;
+}
+
+/* 订单列表容器 */
+.order-list {
+  flex: 1;
+  padding: 0 10rpx;
+}
+
+/* 加载状态 */
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 100rpx 0;
+}
+
+.loading-text {
+  font-size: 30rpx;
+  color: #999;
+}
+
+/* 空状态 */
+.empty-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 150rpx 0;
+}
+
+.empty-icon {
+  font-size: 120rpx;
+  margin-bottom: 30rpx;
+}
+
+.empty-text {
+  font-size: 32rpx;
+  color: #999;
+}
+
+/* 订单卡片样式 */
+.order-card {
+  background-color: white;
+  margin-bottom: 20rpx;
+  border-radius: 12rpx;
+  padding: 30rpx;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.order-card:active {
+  transform: scale(0.98);
+  box-shadow: 0 2rpx 6rpx rgba(0, 0, 0, 0.05);
+}
+
+/* 订单头部 */
+.order-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20rpx;
+  padding-bottom: 20rpx;
+  border-bottom: 1rpx solid #f5f5f5;
+}
+
+.order-no {
+  display: flex;
+  align-items: center;
+}
+
+.order-label {
+  font-size: 28rpx;
+  color: #999;
+  margin-right: 8rpx;
+}
+
+.order-value {
+  font-size: 28rpx;
+  color: #333;
+  font-weight: 500;
+}
+
+.order-status {
+  padding: 5rpx 20rpx;
+  border-radius: 16rpx;
+}
+
+.status-text {
+  font-size: 24rpx;
+  color: white;
+  font-weight: 500;
+}
+
+/* 订单内容 */
+.order-content {
+  margin-bottom: 20rpx;
+}
+
+.content-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16rpx;
+}
+
+.content-row:last-child {
+  margin-bottom: 0;
+}
+
+.content-label {
+  font-size: 28rpx;
+  color: #666;
+}
+
+.content-value {
+  font-size: 28rpx;
+  color: #333;
+}
+
+.content-value.price {
+  color: #ff6b6b;
+  font-weight: bold;
+  font-size: 32rpx;
+}
+
+/* 订单时间信息 */
+.order-time {
+  margin-bottom: 20rpx;
+  padding-top: 20rpx;
+  border-top: 1rpx solid #f5f5f5;
+}
+
+.time-row {
+  display: flex;
+  margin-bottom: 12rpx;
+}
+
+.time-row:last-child {
+  margin-bottom: 0;
+}
+
+.time-label {
+  font-size: 26rpx;
+  color: #999;
+  width: 130rpx;
+}
+
+.time-value {
+  font-size: 26rpx;
+  color: #666;
+  flex: 1;
+}
+
+/* 订单底部样式 */
+.order-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20rpx 30rpx;
+  border-top: 1rpx solid #e8e8e8;
+}
+
+/* 下单时间样式 */
+.order-date {
+  color: #999;
+  font-size: 26rpx;
+}
+
+/* 操作按钮容器 */
+.action-buttons {
+  display: flex;
+  gap: 20rpx;
+}
+
+/* 拒绝按钮样式 */
+.reject-btn {
+  padding: 0 20rpx;
+  height: 50rpx;
+  line-height: 50rpx;
+  font-size: 22rpx;
+  color: #666;
+  background-color: #f0f0f0;
+  border-radius: 25rpx;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 10rpx;
+  box-sizing: border-box;
+  touch-action: manipulation;
+}
+
+.reject-btn:active {
+  background-color: #e0e0e0;
+}
+
+/* 接受按钮样式 */
+.accept-btn {
+  padding: 0 20rpx;
+  height: 50rpx;
+  line-height: 50rpx;
+  font-size: 22rpx;
+  color: #fff;
+  background-color: #1890ff;
+  border-radius: 25rpx;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 10rpx;
+  box-sizing: border-box;
+  touch-action: manipulation;
+}
+
+.accept-btn:active {
+  background-color: #40a9ff;
+}
+
+.accept-btn:active {
+  background-color: #40a9ff;
+}
+
+/* 刷新指示器 */
+.refresh-indicator {
+  position: fixed;
+  top: 20rpx;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 0, 0, 0.7);
+  padding: 10rpx 30rpx;
+  border-radius: 40rpx;
+  z-index: 999;
+}
+
+.refresh-text {
+  color: white;
+  font-size: 24rpx;
+}
+
+/* 自定义底部导航栏样式 */
+.custom-tab-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100rpx;
+  background-color: #ffffff;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  box-shadow: 0 -2rpx 10rpx rgba(0, 0, 0, 0.1);
+  z-index: 998;
+}
+
+/* 单个导航项样式 */
+.tab-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  height: 100%;
+}
+
+/* 导航图标样式 */
+.tab-icon {
+  font-size: 40rpx;
+  margin-bottom: 8rpx;
+}
+
+/* 导航文字样式 */
+.tab-text {
+  font-size: 24rpx;
+  color: #999999;
+}
+
+/* 选中状态样式 */
+.tab-item.active .tab-text {
+  color: #1AAD19;
+  font-weight: bold;
+}
+
+/* 页面内容底部内边距，避免被底部导航栏遮挡 */
+.container {
+  padding-bottom: 120rpx;
+}

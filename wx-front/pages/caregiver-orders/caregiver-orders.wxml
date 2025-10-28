@@ -1,0 +1,143 @@
+<!-- caregiver-orders.wxml -->
+
+<!-- 页面容器 -->
+<view class="container">
+  <!-- 订单状态Tab栏 - 固定在页面顶部 -->
+  <view class="tab-bar">
+    <view 
+      wx:for="{{tabs}}" 
+      wx:key="id" 
+      class="tab-item {{currentTab === index ? 'active' : ''}}"
+      data-index="{{index}}"
+      bindtap="onTabChange"
+    >
+      <text class="tab-text">{{item.name}}</text>
+      <view wx:if="{{currentTab === index}}" class="tab-indicator"></view>
+    </view>
+  </view>
+
+  <!-- 订单列表容器 -->
+  <view class="order-list">
+    <!-- 加载状态 -->
+    <view wx:if="{{loading && !loadingMore}}" class="loading-container">
+      <text class="loading-text">正在加载...</text>
+    </view>
+
+    <!-- 空状态 -->
+    <view wx:elif="{{!loading && orderList.length === 0}}" class="empty-container">
+      <text class="empty-icon">📋</text>
+      <text class="empty-text">暂无订单</text>
+    </view>
+
+    <!-- 订单列表 -->
+    <view wx:else>
+      <!-- 订单卡片 -->
+      <view 
+        wx:for="{{orderList}}" 
+        wx:key="id"
+        class="order-card"
+        data-id="{{item.id}}"
+        bindtap="onOrderCardTap"
+      >
+        <!-- 订单头部 -->
+        <view class="order-header">
+          <view class="order-no">
+            <text class="order-label">订单号：</text>
+            <text class="order-value">{{item.orderNo}}</text>
+          </view>
+          <view 
+            class="order-status"
+            style="background-color: {{item.status === '2' ? '#fa8c16' : item.status === '3' ? '#1890ff' : item.status === '5' ? '#52c41a' : '#999999'}}"
+          >
+            <text class="status-text">{{item.statusText}}</text>
+          </view>
+        </view>
+
+        <!-- 订单内容 -->
+        <view class="order-content">
+          <view class="content-row">
+            <text class="content-label">服务类型：</text>
+            <text class="content-value">{{item.serviceTypeName || '未设置'}}</text>
+          </view>
+          <view class="content-row">
+            <text class="content-label">服务时长：</text>
+            <text class="content-value">{{item.serviceDuration || 0}}小时</text>
+          </view>
+          <view class="content-row">
+            <text class="content-label">服务地址：</text>
+            <text class="content-value">{{item.address || '未设置'}}</text>
+          </view>
+          <view class="content-row">
+            <text class="content-label">订单金额：</text>
+            <text class="content-value price">¥{{item.totalPrice || 0}}</text>
+          </view>
+        </view>
+
+        <!-- 订单时间信息 -->
+        <view class="order-time">
+          <view class="time-row">
+            <text class="time-label">开始时间：</text>
+            <text class="time-value">{{item.startTime}}</text>
+          </view>
+          <view class="time-row">
+            <text class="time-label">结束时间：</text>
+            <text class="time-value">{{item.endTime}}</text>
+          </view>
+        </view>
+
+        <!-- 订单底部 -->
+        <view class="order-footer">
+          <text class="order-date">下单时间：{{item.createTime}}</text>
+          <!-- 仅对状态为待接单(2)的订单显示操作按钮 -->
+          <view wx:if="{{item.status === 2}}" class="action-buttons">
+            <view class="reject-btn" data-id="{{item.id}}" bindtap="handleRejectOrder">拒绝</view>
+            <view class="accept-btn" data-id="{{item.id}}" bindtap="handleAcceptOrder">接受</view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 加载更多指示器 -->
+      <view wx:if="{{loadingMore}}" class="loading-container">
+        <text class="loading-text">加载更多...</text>
+      </view>
+
+      <!-- 没有更多数据提示 -->
+      <view wx:if="{{!hasMore && orderList.length > 0}}" class="empty-container">
+        <text class="empty-text">没有更多数据了</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 下拉刷新提示 -->
+  <view wx:if="{{loading && page === 1}}" class="refresh-indicator">
+    <text class="refresh-text">{{refreshText}}</text>
+  </view>
+
+  <!-- 自定义底部导航栏 -->
+  <view class="custom-tab-bar">
+    <view 
+      class="tab-item {{activeTab === 'index' ? 'active' : ''}}"
+      data-page="pages/index/index"
+      bindtap="navigateToPage"
+    >
+      <text class="tab-icon">🏠</text>
+      <text class="tab-text">首页</text>
+    </view>
+    <view 
+      class="tab-item {{activeTab === 'orders' ? 'active' : ''}}"
+      data-page="pages/orders/orders"
+      bindtap="navigateToPage"
+    >
+      <text class="tab-icon">📋</text>
+      <text class="tab-text">订单</text>
+    </view>
+    <view 
+      class="tab-item {{activeTab === 'profile' ? 'active' : ''}}"
+      data-page="pages/profile/profile"
+      bindtap="navigateToPage"
+    >
+      <text class="tab-icon">👤</text>
+      <text class="tab-text">我的</text>
+    </view>
+  </view>
+</view>
