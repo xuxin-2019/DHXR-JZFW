@@ -6,7 +6,8 @@
     "pages/service-request/service-request",
     "pages/orders/orders",
     "pages/profile/profile",
-    "pages/edit-profile/edit-profile"
+    "pages/edit-profile/edit-profile",
+    "pages/caregiver-orders/caregiver-orders"
   ],
   "window": {
     "navigationBarTextStyle": "black",

@@ -205,7 +205,8 @@ public class OrderController extends BaseController {
     public Result findOrdersByUserIdAndStatus(
             @RequestParam(defaultValue = "1") Integer page,
             @RequestParam(defaultValue = "10") Integer pageSize,
-            @RequestParam Long userId,
+            @RequestParam(required = false) Long userId,
+            @RequestParam(required = false) Long nurseId,
             @RequestParam(required = false) String status) {
         // 创建分页对象
         com.baomidou.mybatisplus.extension.plugins.pagination.Page<OrderVO> pageResult = 
@@ -216,7 +217,8 @@ public class OrderController extends BaseController {
         
         // 设置查询参数
         params.put("userId", userId);
-        
+        params.put("nurseId", nurseId);
+
         // 解析状态字符串为列表
         if (status != null && !status.isEmpty()) {
             // 处理格式如"[1,2,7]"的字符串

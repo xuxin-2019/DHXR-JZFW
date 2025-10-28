@@ -84,6 +84,9 @@ Page({
         console.log('获取服务类型成功:', res.data);
         
         if (res.data.code === 200 && res.data.data && res.data.data.length > 0) {
+          // 将服务类型列表存储到本地
+          wx.setStorageSync('serviceTypes', res.data.data);
+          
           this.setData({
             serviceTypes: res.data.data,
             // 默认选中第一个服务类型
@@ -249,7 +252,7 @@ Page({
         
         if (res.data.code === 200 || res.data.success) {
           // 登录成功，保存用户信息到本地存储
-          wx.setStorageSync('userInfo', userInfo);
+          wx.setStorageSync('userInfo', res.data.data?.userInfo || {});
           wx.setStorageSync('token', res.data.data?.token || '');
           // 存储用户角色标识到本地
           wx.setStorageSync('userRole', role);

@@ -1,5 +1,6 @@
 // 个人中心页面逻辑
 const { API } = require('../../utils/api');
+const { getServiceTypeName, ensureServiceTypesLoaded } = require('../../utils/util');
 
 Page({
   /**
@@ -49,24 +50,63 @@ Page({
   /**
    * 加载用户信息
    */
-  loadUserInfo() {
-    const userInfo = wx.getStorageSync('userInfo') || {};
-    const userRole = wx.getStorageSync('userRole') || '';
-    
-    // 根据角色显示对应的文本
-    let roleText = '';
-    if (userRole === '1') {
-      roleText = '用户';
-    } else if (userRole === '2') {
-      roleText = '护工';
+  async loadUserInfo() {
+    try {
+      // 确保服务类型列表已加载
+      await ensureServiceTypesLoaded();
+      
+      const userInfo = wx.getStorageSync('userInfo') || {};
+      const userRole = wx.getStorageSync('userRole') || '';
+      console.log('userRole:', userRole);
+      console.log('userInfo:', userInfo);
+      
+      // 根据角色显示对应的文本
+      let roleText = '';
+      if (userRole === '1') {
+        roleText = '用户';
+      } else if (userRole === '2') {
+        roleText = '护工';
+        // 如果是护工，获取服务类型名称
+        const serviceTypeName = getServiceTypeName(userInfo.serviceTypeId);
+        // 创建一个新的用户信息对象，避免直接修改原始数据
+        const updatedUserInfo = {
+          ...userInfo,
+          serviceTypeName: serviceTypeName
+        };
+        this.setData({
+          userInfo: updatedUserInfo,
+          userRole: userRole,
+          roleText: roleText,
+          isLoading: false
+        });
+        return;
+      }
+      
+      this.setData({
+        userInfo: userInfo,
+        userRole: userRole,
+        roleText: roleText,
+        isLoading: false
+      });
+    } catch (error) {
+      console.error('加载用户信息失败:', error);
+      // 即使出错，也要继续显示用户信息
+      const userInfo = wx.getStorageSync('userInfo') || {};
+      const userRole = wx.getStorageSync('userRole') || '';
+      let roleText = '';
+      if (userRole === '1') {
+        roleText = '用户';
+      } else if (userRole === '2') {
+        roleText = '护工';
+      }
+      
+      this.setData({
+        userInfo: userInfo,
+        userRole: userRole,
+        roleText: roleText,
+        isLoading: false
+      });
     }
-    
-    this.setData({
-      userInfo: userInfo,
-      userRole: userRole,
-      roleText: roleText,
-      isLoading: false
-    });
   },
 
   /**
@@ -109,7 +149,7 @@ Page({
               wx.removeStorageSync('userId');
               
               // 跳转到首页
-              wx.switchTab({
+              wx.redirectTo({
                 url: '../index/index'
               });
             }
@@ -152,13 +192,24 @@ Page({
         return;
       }
       
-      if (userRole !== '1') {
+      // 根据角色跳转到不同的订单页面
+      if (userRole === '1') {
+        // 用户角色跳转到用户订单页面
+        wx.redirectTo({
+          url: '/pages/orders/orders'
+        });
+      } else if (userRole === '2') {
+        // 护工角色跳转到护工订单页面
+        wx.redirectTo({
+          url: '/pages/caregiver-orders/caregiver-orders'
+        });
+      } else {
         wx.showToast({
-          title: '无权限访问订单页面',
+          title: '角色未知，无法访问订单页面',
           icon: 'none'
         });
-        return;
       }
+      return;
     }
     
     // 添加对"我的"页面的登录校验

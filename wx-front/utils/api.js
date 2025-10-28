@@ -39,10 +39,16 @@ export const API = {
     // 获取订单列表
     list: `${BASE_URL}/order/list`,
     // 微信小程序端查询订单列表（支持userId和status数组）
-    wxList: `${BASE_URL}/order/wxList`
+    wxList: `${BASE_URL}/order/wxList`,
+    // 更新订单状态
+    updateStatus: `${BASE_URL}/order/status`
   },
   caregiver: {
     // 护工相关接口预留
+  },
+  caregiverOrder: {
+    // 获取护工订单列表
+    list: `${BASE_URL}/order/nurseList`
   }
 };
 

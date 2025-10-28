@@ -79,35 +79,45 @@
 .button-section {
   display: flex;
   flex-direction: column;
-  gap: 20rpx;
-  margin-bottom: 30rpx;
+  gap: 24rpx;
+  margin-top: 30rpx;
+  padding: 0 20rpx;
 }
 
 .primary-button {
-  background-color: #3199ff;
+  background: linear-gradient(135deg, #3199ff, #2b88e3);
   color: #fff;
-  border-radius: 10rpx;
-  font-size: 32rpx;
-  line-height: 90rpx;
-  height: 90rpx;
+  border-radius: 45rpx;
+  font-size: 34rpx;
+  font-weight: 600;
+  line-height: 96rpx;
+  height: 96rpx;
+  box-shadow: 0 8rpx 20rpx rgba(49, 153, 255, 0.25);
+  transition: all 0.3s ease;
 }
 
 .primary-button:active {
-  background-color: #1a88e5;
+  background: linear-gradient(135deg, #2b88e3, #2277d4);
+  box-shadow: 0 4rpx 10rpx rgba(49, 153, 255, 0.2);
+  transform: translateY(2rpx);
 }
 
 .secondary-button {
   background-color: #fff;
-  color: #333;
+  color: #555;
   border: 1rpx solid #e0e0e0;
-  border-radius: 10rpx;
-  font-size: 32rpx;
-  line-height: 90rpx;
-  height: 90rpx;
+  border-radius: 45rpx;
+  font-size: 34rpx;
+  line-height: 96rpx;
+  height: 96rpx;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
 }
 
 .secondary-button:active {
-  background-color: #f5f5f5;
+  background-color: #f8f8f8;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.05);
+  transform: translateY(2rpx);
 }
 
 /* 用户详细信息区域 */

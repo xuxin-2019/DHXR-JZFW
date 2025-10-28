@@ -84,17 +84,17 @@ Page({
     request(`${API.serviceType.info}?id=${serviceId}`, {
       method: 'GET'
     }).then(res => {
-      console.log('获取服务详情成功:', res.data);
+      console.log('获取服务详情成功:', res);
       
-      if (res.data.code === 200 && res.data.data) {
+      if (res.code === 200 && res.data) {
         // 更新服务信息
         this.setData({
-          servicePrice: res.data.data.price || 0,
-          serviceDuration: res.data.data.duration || 0
+          servicePrice: res.data.price || 0,
+          serviceDuration: res.data.duration || 0
         });
       } else {
         wx.showToast({
-          title: res.data.message || '获取服务信息失败',
+          title: res.message || '获取服务信息失败',
           icon: 'none'
         });
       }
@@ -304,9 +304,9 @@ Page({
         'Authorization': `Bearer ${token}`
       }
     }).then(res => {
-      console.log('创建订单成功:', res.data);
+      console.log('创建订单成功:', res);
       
-      if (res.data.code === 200 || res.data.success) {
+      if (res.code === 200 || res.success) {
         // 订单创建成功
         wx.showToast({
           title: '订单创建成功',
@@ -315,13 +315,13 @@ Page({
         
         // 延迟跳转到首页
         setTimeout(() => {
-          wx.switchTab({
+          wx.redirectTo({
             url: '../index/index'
           });
         }, 1500);
       } else {
         wx.showToast({
-          title: res.data.message || '创建订单失败',
+          title: res.message || '创建订单失败',
           icon: 'none'
         });
       }

@@ -66,14 +66,13 @@
         <view class="form-label">服务类型</view>
         <picker 
           class="form-picker"
-          bindchange="onInput" 
-          data-field="serviceTypeId"
+          bindchange="onServiceTypeChange"
           value="{{serviceTypeIdIndex}}"
           range="{{serviceTypes}}"
           range-key="name"
         >
           <view class="picker-display">
-            {{formData.serviceTypeId ? getServiceTypeName(formData.serviceTypeId) : '请选择服务类型'}}
+            {{formData.serviceTypeId ? userInfo.serviceTypeName : '请选择服务类型'}}
           </view>
         </picker>
       </view>

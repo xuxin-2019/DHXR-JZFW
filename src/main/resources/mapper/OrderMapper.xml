@@ -53,6 +53,9 @@
             <if test="params.userId != null">
                 AND o.user_id = #{params.userId}
             </if>
+            <if test="params.nurseId != null">
+                AND o.nurse_id = #{params.nurseId}
+            </if>
             <if test="params.status != null">
                 AND o.status = #{params.status}
             </if>

@@ -227,13 +227,24 @@ Page({
         return;
       }
       
-      if (userRole !== '1') {
+      // 根据角色跳转到不同的订单页面
+      if (userRole === '1') {
+        // 用户角色跳转到用户订单页面
+        wx.redirectTo({
+          url: '/pages/orders/orders'
+        });
+      } else if (userRole === '2') {
+        // 护工角色跳转到护工订单页面
+        wx.redirectTo({
+          url: '/pages/caregiver-orders/caregiver-orders'
+        });
+      } else {
         wx.showToast({
-          title: '无权限访问订单页面',
+          title: '角色未知，无法访问订单页面',
           icon: 'none'
         });
-        return;
       }
+      return;
     }
     
     // 添加对"我的"页面的登录校验
