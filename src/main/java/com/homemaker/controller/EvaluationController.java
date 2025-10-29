@@ -1,7 +1,10 @@
 package com.homemaker.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.homemaker.common.Result;
 import com.homemaker.entity.Evaluation;
+import com.homemaker.entity.dto.EvaluationDTO;
 import com.homemaker.service.EvaluationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -49,6 +52,24 @@ public class EvaluationController extends BaseController {
         } else {
             return Result.error("未找到评价信息");
         }
+    }
+
+    /**
+     * 分页查询评价列表
+     * @param page 当前页码
+     * @param size 每页大小
+     * @param orderId 订单ID（可选，用于筛选）
+     * @return 评价列表，包含用户名和护工名
+     */
+    @GetMapping("/list")
+    @Operation(summary = "分页查询评价列表", description = "分页查询所有评价，支持按订单ID筛选，并返回用户名和护工名")
+    public Result list(@RequestParam(defaultValue = "1") int page, 
+                       @RequestParam(defaultValue = "10") int size, 
+                       @RequestParam(required = false) String orderId) {
+        // 使用自定义SQL实现联表查询
+        Page<EvaluationDTO> result = evaluationService.getEvaluationListWithNames(page, size, orderId);
+        
+        return Result.success("查询成功", result);
     }
 
 }

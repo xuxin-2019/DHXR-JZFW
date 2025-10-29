@@ -26,7 +26,7 @@ public class Evaluation implements Serializable {
     /**
      * 订单ID
      */
-    private Long orderId;
+    private String orderId;
 
     /**
      * 用户ID

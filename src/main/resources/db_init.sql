@@ -81,7 +81,7 @@ CREATE TABLE IF NOT EXISTS `order` (
 -- 评价表
 CREATE TABLE IF NOT EXISTS `evaluation` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '评价ID',
-  `order_id` bigint(20) NOT NULL COMMENT '订单ID',
+  `order_id` VARCHAR(50) NOT NULL COMMENT '订单ID',
   `user_id` bigint(20) NOT NULL COMMENT '用户ID',
   `nurse_id` bigint(20) NOT NULL COMMENT '护工ID',
   `rating` tinyint(1) NOT NULL COMMENT '评分(1-5星)',

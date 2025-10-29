@@ -54,6 +54,10 @@
                             </template>
                             <el-menu-item index="1-1">订单列表</el-menu-item>
                         </el-submenu>
+                        <el-menu-item index="5">
+                            <i class="el-icon-star-on"></i>
+                            <span>评价管理</span>
+                        </el-menu-item>
                         <el-submenu index="2">
                             <template slot="title">
                                 <i class="el-icon-user"></i>
@@ -80,8 +84,55 @@
 
                 <!-- 内容区域 -->
                 <el-main class="main-content">
+                    <!-- 评价管理页面 -->
+                    <div v-if="activeMenu === '5'">
+                        <div class="content-header">
+                            <h3>评价管理</h3>
+                        </div>
+                        <div class="content-body">
+                            <el-row :gutter="20" class="search-row">
+                                <el-col :span="6">
+                                    <el-input v-model="evaluationSearchForm.orderId" placeholder="请输入订单ID" clearable></el-input>
+                                </el-col>
+                                <el-col :span="6">
+                                    <el-button type="primary" @click="searchEvaluations">搜索</el-button>
+                                    <el-button @click="resetEvaluationSearch">重置</el-button>
+                                </el-col>
+                            </el-row>
+                            <el-table :data="evaluationList" style="width: 100%">
+                                <el-table-column prop="id" label="评价ID" width="80"></el-table-column>
+                                <el-table-column prop="orderId" label="订单ID" width="120"></el-table-column>
+                                <el-table-column prop="userName" label="用户名" width="120"></el-table-column>
+                                <el-table-column prop="nurseName" label="护工名" width="120"></el-table-column>
+                                <el-table-column prop="rating" label="评分" width="80">
+                                    <template slot-scope="scope">
+                                        <div>{{ scope.row.rating }}</div>
+                                    </template>
+                                </el-table-column>
+                                <el-table-column prop="content" label="评价内容" show-overflow-tooltip></el-table-column>
+                                <el-table-column prop="createTime" label="创建时间" width="180">
+                                    <template slot-scope="scope">
+                                        <div>{{ formatDateTime(scope.row.createTime) }}</div>
+                                    </template>
+                                </el-table-column>
+                            </el-table>
+                            <div class="pagination-row">
+                                <el-pagination
+                                    background
+                                    layout="total, sizes, prev, pager, next, jumper"
+                                    :total="evaluationTotal"
+                                    v-model:current-page="evaluationCurrentPage"
+                                    v-model:page-size="evaluationPageSize"
+                                    @size-change="handleEvaluationSizeChange"
+                                    @current-change="handleEvaluationCurrentChange"
+                                >
+                                </el-pagination>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- 订单管理页面 -->
-                    <div v-if="activeMenu === '1-1'">
+                    <div v-else-if="activeMenu === '1-1'">
                         <div class="content-header">
                             <h3>订单管理</h3>
                         </div>

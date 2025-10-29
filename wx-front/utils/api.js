@@ -49,6 +49,10 @@ export const API = {
   caregiverOrder: {
     // 获取护工订单列表
     list: `${BASE_URL}/order/nurseList`
+  },
+  evaluation: {
+    // 创建评价
+    create: `${BASE_URL}/evaluation/create`
   }
 };
 

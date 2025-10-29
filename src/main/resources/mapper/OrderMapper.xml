@@ -20,6 +20,8 @@
         <result column="end_time" property="endTime"/>
         <result column="create_time" property="createTime"/>
         <result column="update_time" property="updateTime"/>
+        <result column="user_phone" property="userPhone"/>
+        <result column="nurse_phone" property="nursePhone"/>
     </resultMap>
     
     <select id="selectOrderListWithDetails" resultMap="OrderVOResultMap">
@@ -40,7 +42,9 @@
             o.start_time,
             o.end_time,
             o.create_time,
-            o.update_time
+            o.update_time,
+            u.phone as user_phone,
+            n.phone as nurse_phone
         FROM 
             `order` o
         LEFT JOIN 

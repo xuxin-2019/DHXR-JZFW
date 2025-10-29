@@ -2,7 +2,7 @@
 <view class="container">
   <!-- 页面标题 -->
   <view class="page-title">
-    <text>服务申请</text>
+    <text>服务预约</text>
   </view>
   
   <!-- 服务信息卡片 -->
@@ -108,7 +108,7 @@
       disabled="{{loading}}"
       loading="{{loading}}"
     >
-      确认申请
+      确认预约
     </button>
   </view>
 </view>

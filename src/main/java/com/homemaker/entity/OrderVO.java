@@ -94,4 +94,14 @@ public class OrderVO {
      * 更新时间
      */
     private Date updateTime;
+
+    /**
+     * 用户电话
+     */
+    private String userPhone;
+
+    /**
+     * 护工电话
+     */
+    private String nursePhone;
 }

@@ -52,6 +52,7 @@
           <text class="content-label">服务类型：</text>
           <text class="content-value">{{item.serviceName || item.serviceType}}</text>
         </view>
+        <!-- 已接单状态下显示护工电话按钮将在底部显示 -->
         <view class="content-row">
           <text class="content-label">服务金额：</text>
           <text class="content-value price">¥{{item.amount || item.price}}</text>
@@ -73,6 +74,14 @@
       <!-- 订单底部 -->
       <view class="order-footer">
         <text class="order-date">{{item.createTime ? item.createTime.split(' ')[0] : ''}}</text>
+        <!-- 已接单状态下显示联系护工按钮 -->
+        <view wx:if="{{item.status === 3 || (item.statusInfo && item.statusInfo.code === 3)}}" class="action-buttons">
+          <view class="contact-btn" data-phone="{{item.nursePhone}}" bindtap="contactCaregiver">联系护工</view>
+        </view>
+        <!-- 已完成状态下显示去评价按钮 -->
+        <view wx:if="{{item.status === 5 || (item.statusInfo && item.statusInfo.code === 5)}}" class="action-buttons">
+          <view class="review-btn" data-id="{{item.orderNo}}" data-nurseid="{{item.nurseId}}" bindtap="onReviewButtonTap">去评价</view>
+        </view>
       </view>
     </view>
   </view>
@@ -105,6 +114,47 @@
     <view class="tab-item" bindtap="navigateToPage" data-page="pages/profile/profile">
       <view class="tab-icon">👤</view>
       <text class="tab-text">我的</text>
+    </view>
+  </view>
+  
+  <!-- 评价弹窗 -->
+  <view class="modal-mask" wx:if="{{showReviewModal}}" bindtap="closeReviewModal"></view>
+  <view class="modal-container" wx:if="{{showReviewModal}}">
+    <view class="modal-header">
+      <text class="modal-title">评价服务</text>
+      <view class="modal-close" bindtap="closeReviewModal">✕</view>
+    </view>
+    <view class="modal-content">
+      <!-- 评分选择 -->
+      <view class="rating-section">
+        <text class="rating-label">服务评分：</text>
+        <view class="rating-stars">
+          <text 
+            wx:for="{{[1, 2, 3, 4, 5]}}" 
+            wx:key="*this"
+            class="star {{currentRating >= index + 1 ? 'active' : ''}}"
+            bindtap="selectRating" 
+            data-rating="{{index + 1}}"
+          >★</text>
+        </view>
+      </view>
+      
+      <!-- 评价内容 -->
+      <view class="review-content-section">
+        <text class="content-label">评价内容：</text>
+        <textarea 
+          class="review-textarea" 
+          placeholder="请输入您的评价（选填）" 
+          value="{{reviewContent}}" 
+          bindinput="onReviewInput"
+          maxlength="200"
+        ></textarea>
+        <text class="char-count">{{reviewContent.length}}/200</text>
+      </view>
+    </view>
+    <view class="modal-footer">
+      <button class="cancel-btn" bindtap="closeReviewModal">取消</button>
+      <button class="submit-btn" bindtap="submitReview" type="primary">提交评价</button>
     </view>
   </view>
 </view>

@@ -41,6 +41,15 @@
       </view>
     </view>
     
+    <!-- 联系客服区域 -->
+    <view class="customer-service-section">
+      <view class="service-item" bindtap="contactCustomerService">
+        <text class="service-icon">📞</text>
+        <text class="service-label">联系客服</text>
+        <text class="service-arrow">›</text>
+      </view>
+    </view>
+    
     <!-- 功能按钮区域 -->
     <view class="button-section">
       <button class="primary-button" bindtap="goToEditProfile">修改信息</button>

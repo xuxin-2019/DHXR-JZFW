@@ -23,7 +23,7 @@ Page({
     // tab栏数据
     tabs: [
       { id: 'all', name: '全部', statusList: [] },
-      { id: 'pending', name: '派单中', statusList: [1, 2, 7] },
+      { id: 'pending', name: '派单中', statusList: [1, 2] },
       { id: 'accepted', name: '已接单', statusList: [3] },
       { id: 'completed', name: '已完成', statusList: [5] }
     ],
@@ -36,7 +36,13 @@ Page({
     page: 1,
     pageSize: 10,
     hasMore: true,
-    loadingMore: false
+    loadingMore: false,
+    // 评价相关数据
+    showReviewModal: false,
+    currentOrderId: '',
+    currentNurseId: '',
+    currentRating: 5,
+    reviewContent: ''
   },
 
   /**
@@ -174,10 +180,15 @@ Page({
       4: { text: '服务中', color: '#00bcd4' },
       5: { text: '已完成', color: '#8bc34a' },
       6: { text: '已取消', color: '#9e9e9e' },
-      7: { text: '待支付', color: '#e91e63' }
+      7: { text: '已拒绝', color: '#e91e63' }
     };
     
-    return orders.map(order => {
+    // 过滤掉已取消和已拒绝的订单
+    const filteredOrders = orders.filter(order => {
+      return order.status !== 6 && order.status !== 7;
+    });
+    
+    return filteredOrders.map(order => {
       return {
         ...order,
         // 映射服务类型和金额字段，确保与WXML模板匹配
@@ -210,6 +221,99 @@ Page({
     return `${year}-${month}-${day} ${hours}:${minutes}`;
   },
 
+  /**
+   * 处理tab切换
+   * @param {Object} e 事件对象
+   */
+  /**
+   * 处理评价按钮点击事件
+   * @param {Object} e 事件对象
+   */
+  onReviewButtonTap: function(e) {
+    const orderId = e.currentTarget.dataset.id;
+    const nurseId = e.currentTarget.dataset.nurseid;
+    
+    this.setData({
+      showReviewModal: true,
+      currentOrderId: orderId,
+      currentNurseId: nurseId,
+      currentRating: 5,
+      reviewContent: ''
+    });
+  },
+  
+  /**
+   * 关闭评价弹窗
+   */
+  closeReviewModal: function() {
+    this.setData({
+      showReviewModal: false
+    });
+  },
+  
+  /**
+   * 选择评分
+   * @param {Object} e 事件对象
+   */
+  selectRating: function(e) {
+    const rating = e.currentTarget.dataset.rating;
+    this.setData({
+      currentRating: rating
+    });
+  },
+  
+  /**
+   * 处理评价内容输入
+   * @param {Object} e 事件对象
+   */
+  onReviewInput: function(e) {
+    this.setData({
+      reviewContent: e.detail.value
+    });
+  },
+  
+  /**
+   * 提交评价
+   */
+  submitReview: function() {
+    const evaluation = {
+      orderId: this.data.currentOrderId,
+      nurseId: this.data.currentNurseId,
+      userId: this.data.userId,
+      rating: this.data.currentRating,
+      content: this.data.reviewContent
+    };
+    
+    wx.showLoading({ title: '提交中...' });
+    
+    // 调用API创建评价
+    request(API.evaluation.create, {
+      method: 'POST',
+      data: evaluation
+    }).then(res => {
+      wx.hideLoading();
+      
+      if (res.code === 200) {
+        wx.showToast({ title: '评价成功' });
+        this.closeReviewModal();
+        // 重新加载订单列表，更新订单状态
+        this.loadOrderList(true);
+      } else {
+        wx.showToast({ 
+          title: res.message || '评价失败', 
+          icon: 'none' 
+        });
+      }
+    }).catch(error => {
+      wx.hideLoading();
+      wx.showToast({ 
+        title: '网络错误，请重试', 
+        icon: 'none' 
+      });
+      console.error('提交评价失败:', error);
+    });
+  },
+  
   /**
    * 处理tab切换
    * @param {Object} e 事件对象
@@ -326,6 +430,53 @@ Page({
           title: '页面跳转失败',
           icon: 'none'
         });
+      }
+    });
+  },
+  
+  /**
+   * 联系护工
+   * 点击联系护工按钮时调用，弹出护工电话号码模态框
+   */
+  contactCaregiver: function(e) {
+    const phoneNumber = e.currentTarget.dataset.phone;
+    
+    // 检查是否有电话号码
+    if (!phoneNumber) {
+      wx.showToast({
+        title: '未获取到护工电话',
+        icon: 'none'
+      });
+      return;
+    }
+    
+    // 弹出模态框显示电话号码并提供拨打电话选项
+    wx.showModal({
+      title: '联系护工',
+      content: `护工电话：${phoneNumber}`,
+      showCancel: true,
+      cancelText: '取消',
+      confirmText: '拨打电话',
+      success: (res) => {
+        if (res.confirm) {
+          // 用户确认拨打电话
+          wx.makePhoneCall({
+            phoneNumber: phoneNumber,
+            success: () => {
+              console.log('拨打电话成功');
+            },
+            fail: (error) => {
+              console.error('拨打电话失败:', error);
+              wx.showToast({
+                title: '拨打电话失败',
+                icon: 'none'
+              });
+            }
+          });
+        }
+      },
+      fail: (error) => {
+        console.error('显示模态框失败:', error);
       }
     });
   }

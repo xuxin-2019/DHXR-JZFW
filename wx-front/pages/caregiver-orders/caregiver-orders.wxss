@@ -271,6 +271,27 @@
   background-color: #40a9ff;
 }
 
+/* 联系按钮样式 */
+.contact-btn {
+  padding: 0 20rpx;
+  height: 50rpx;
+  line-height: 50rpx;
+  font-size: 22rpx;
+  color: #fff;
+  background-color: #52c41a;
+  border-radius: 25rpx;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 10rpx;
+  box-sizing: border-box;
+  touch-action: manipulation;
+}
+
+.contact-btn:active {
+  background-color: #73d13d;
+}
+
 /* 刷新指示器 */
 .refresh-indicator {
   position: fixed;

@@ -67,6 +67,7 @@
             <text class="content-label">服务地址：</text>
             <text class="content-value">{{item.address || '未设置'}}</text>
           </view>
+          <!-- 已接单状态下显示用户电话按钮将在底部显示 -->
           <view class="content-row">
             <text class="content-label">订单金额：</text>
             <text class="content-value price">¥{{item.totalPrice || 0}}</text>
@@ -92,6 +93,10 @@
           <view wx:if="{{item.status === 2}}" class="action-buttons">
             <view class="reject-btn" data-id="{{item.id}}" bindtap="handleRejectOrder">拒绝</view>
             <view class="accept-btn" data-id="{{item.id}}" bindtap="handleAcceptOrder">接受</view>
+          </view>
+          <!-- 已接单状态下显示联系用户按钮 -->
+          <view wx:if="{{item.status === 3}}" class="action-buttons">
+            <view class="contact-btn" data-phone="{{item.userPhone}}" bindtap="contactUser">联系用户</view>
           </view>
         </view>
       </view>

@@ -36,7 +36,8 @@ Page({
       { id: '0', name: '全部' },
       { id: '2', name: '待接单' },
       { id: '3', name: '已接单' },
-      { id: '5', name: '已完成' }
+      { id: '5', name: '已完成' },
+      { id: '7', name: '已拒绝' }
     ],
 
     userId: wx.getStorageSync('userId') || '',
@@ -153,7 +154,10 @@ Page({
       // 处理API响应数据
       if (res.code === 200 && res.data) {
         // 处理订单数据，格式化日期等
-        const formattedOrders = res.data.records.map(order => {
+        // 过滤掉已取消的订单
+        const filteredRecords = res.data.records.filter(order => order.status !== 6);
+        
+        const formattedOrders = filteredRecords.map(order => {
           // 计算服务时长
           let serviceDuration = 0;
           if (order.startTime && order.endTime) {
@@ -404,6 +408,53 @@ Page({
     // wx.navigateTo({
     //   url: `/pages/order-detail/order-detail?id=${orderId}`
     // });
+  },
+  
+  /**
+   * 联系用户
+   * 点击联系用户按钮时调用，弹出用户电话号码模态框
+   */
+  contactUser: function(e) {
+    const phoneNumber = e.currentTarget.dataset.phone;
+    
+    // 检查是否有电话号码
+    if (!phoneNumber) {
+      wx.showToast({
+        title: '未获取到用户电话',
+        icon: 'none'
+      });
+      return;
+    }
+    
+    // 弹出模态框显示电话号码并提供拨打电话选项
+    wx.showModal({
+      title: '联系用户',
+      content: `用户电话：${phoneNumber}`,
+      showCancel: true,
+      cancelText: '取消',
+      confirmText: '拨打电话',
+      success: (res) => {
+        if (res.confirm) {
+          // 用户确认拨打电话
+          wx.makePhoneCall({
+            phoneNumber: phoneNumber,
+            success: () => {
+              console.log('拨打电话成功');
+            },
+            fail: (error) => {
+              console.error('拨打电话失败:', error);
+              wx.showToast({
+                title: '拨打电话失败',
+                icon: 'none'
+              });
+            }
+          });
+        }
+      },
+      fail: (error) => {
+        console.error('显示模态框失败:', error);
+      }
+    });
   },
   
   /**

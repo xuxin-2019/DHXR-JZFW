@@ -158,6 +158,36 @@ Page({
       }
     });
   },
+  
+  /**
+   * 联系客服
+   * 点击后弹出客服电话
+   */
+  contactCustomerService() {
+    const customerServicePhone = '13311090981';
+    wx.showModal({
+      title: '客服电话',
+      content: customerServicePhone,
+      showCancel: true,
+      cancelText: '取消',
+      confirmText: '拨打电话',
+      success: (res) => {
+        if (res.confirm) {
+          // 调用微信系统拨打电话功能
+          wx.makePhoneCall({
+            phoneNumber: customerServicePhone,
+            fail: (error) => {
+              console.error('拨打电话失败:', error);
+              wx.showToast({
+                title: '拨打电话失败',
+                icon: 'none'
+              });
+            }
+          });
+        }
+      }
+    });
+  },
 
   /**
    * 下拉刷新

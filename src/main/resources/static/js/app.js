@@ -152,6 +152,15 @@ new Vue({
             serviceAddress: ''
         },
         // editOrderRules移到computed中，因为需要引用methods中的验证方法
+        
+        // 评价管理相关
+        evaluationList: [],
+        evaluationTotal: 0,
+        evaluationCurrentPage: 1,
+        evaluationPageSize: 10,
+        evaluationSearchForm: {
+            orderId: ''
+        },
     },
     
     // 计算属性
@@ -310,15 +319,15 @@ new Vue({
             return serviceType ? serviceType.name : `未知(${serviceTypeId})`;
         },
         
-        // 格式化日期时间为yyyy-MM-dd hh:mm格式，并在年月日和时分之间添加换行
+        // 格式化日期时间为yyyy-MM-dd hh:mm格式
         formatDateTime(dateTime) {
             if (!dateTime) {
                 return '';
             }
-            // 截取到年月日时分，并在年月日和时分之间添加HTML换行标签
+            // 截取到年月日时分，返回普通文本格式
             const dateStr = dateTime.toString().substring(0, 16);
-            // 在第10个字符位置（年月日之后）添加HTML换行标签
-            return dateStr.substring(0, 10) + '<br/>' + dateStr.substring(11);
+            // 使用空格分隔日期和时间，而不是HTML换行标签
+            return dateStr.substring(0, 10) + ' ' + dateStr.substring(11);
         },
         
         // 格式化服务时间
@@ -354,7 +363,107 @@ new Vue({
                 this.loadNurses();
             } else if (key === '4-1') {
                 this.loadServiceTypes();
+            } else if (key === '5') {
+                this.loadEvaluations();
             }
+        },
+        
+        // 加载评价列表
+        loadEvaluations() {
+            const token = localStorage.getItem('token');
+            axios.get('/homemaker/api/evaluation/list', {
+                params: {
+                    page: this.evaluationCurrentPage,
+                    size: this.evaluationPageSize,
+                    orderId: this.evaluationSearchForm.orderId || null
+                },
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+            .then(response => {
+                if (response.data.code === 200) {
+                    this.evaluationList = response.data.data.records;
+                    this.evaluationTotal = response.data.data.total;
+                } else {
+                    this.$message.error(response.data.message);
+                    // 使用模拟数据
+                    this.evaluationList = [
+                        {
+                            id: 1,
+                            orderId: 1001,
+                            userId: 101,
+                            nurseId: 201,
+                            rating: 5,
+                            content: '服务态度非常好，护工专业且负责任，非常满意！',
+                            createTime: new Date().toLocaleString()
+                        },
+                        {
+                            id: 2,
+                            orderId: 1002,
+                            userId: 102,
+                            nurseId: 202,
+                            rating: 4,
+                            content: '服务不错，护工很细心',
+                            createTime: new Date().toLocaleString()
+                        }
+                    ];
+                    this.evaluationTotal = this.evaluationList.length;
+                }
+            })
+            .catch(error => {
+                console.error('加载评价列表失败:', error);
+                this.$message.error('加载评价列表失败，请稍后重试');
+                // 使用模拟数据
+                this.evaluationList = [
+                    {
+                        id: 1,
+                        orderId: 1001,
+                        userId: 101,
+                        nurseId: 201,
+                        rating: 5,
+                        content: '服务态度非常好，护工专业且负责任，非常满意！',
+                        createTime: new Date().toLocaleString()
+                    },
+                    {
+                        id: 2,
+                        orderId: 1002,
+                        userId: 102,
+                        nurseId: 202,
+                        rating: 4,
+                        content: '服务不错，护工很细心',
+                        createTime: new Date().toLocaleString()
+                    }
+                ];
+                this.evaluationTotal = this.evaluationList.length;
+            });
+        },
+        
+        // 搜索评价
+        searchEvaluations() {
+            this.evaluationCurrentPage = 1;
+            this.loadEvaluations();
+        },
+        
+        // 重置评价搜索条件
+        resetEvaluationSearch() {
+            this.evaluationSearchForm = {
+                orderId: ''
+            };
+            this.evaluationCurrentPage = 1;
+            this.loadEvaluations();
+        },
+        
+        // 处理评价列表分页大小变化
+        handleEvaluationSizeChange(size) {
+            this.evaluationPageSize = size;
+            this.loadEvaluations();
+        },
+        
+        // 处理评价列表页码变化
+        handleEvaluationCurrentChange(current) {
+            this.evaluationCurrentPage = current;
+            this.loadEvaluations();
         },
         
         // 加载订单列表
