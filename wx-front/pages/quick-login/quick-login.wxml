@@ -1,0 +1,54 @@
+<!--quick-login.wxml-->
+<view class="container">
+  <view class="header">
+    <text class="title">一键登录</text>
+  </view>
+  
+  <view class="form-container">
+    <!-- 角色选择 -->
+    <view class="form-item">
+      <text class="label">角色选择 <text class="required">*</text></text>
+      <view class="radio-group">
+        <radio-group bindchange="onRoleChange">
+          <label>
+            <radio value="1" checked="{{role === '1'}}"/> 我是用户
+          </label>
+          <label>
+            <radio value="2" checked="{{role === '2'}}"/> 我是护工
+          </label>
+        </radio-group>
+      </view>
+    </view>
+    
+    <!-- 一键登录按钮 -->
+    <view class="login-section">
+      <button 
+        class="login-btn" 
+        open-type="getPhoneNumber" 
+        bindgetphonenumber="onGetPhoneNumber"
+        disabled="{{!agreeTerms || !role}}"
+      >
+        {{loading ? '登录中...' : '手机号一键登录'}}
+      </button>
+    </view>
+    
+    <!-- 同意条款 -->
+    <view class="agreement-section">
+      <view class="checkbox-group">
+        <checkbox 
+          checked="{{agreeTerms}}" 
+          bindtap="toggleAgreement"
+        />
+        <text class="agreement-text">
+          我已阅读并同意
+          <text class="link" bindtap="viewServiceAgreement">《服务协议与隐私条款》</text>
+          和
+          <text class="link" bindtap="viewPrivacyPolicy">《个人信息保护指引》</text>
+        </text>
+      </view>
+    </view>
+    
+    <!-- 错误提示 -->
+    <text class="error-message" wx:if="{{errorMsg}}">{{errorMsg}}</text>
+  </view>
+</view>

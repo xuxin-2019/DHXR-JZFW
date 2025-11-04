@@ -2,11 +2,14 @@
 // 统一管理后端API路由
 
 // 后端服务基础地址
-// const BASE_URL = 'http://127.0.0.1:8080/homemaker/api';
-const BASE_URL = 'https://120.53.84.167/homemaker/api';
+const BASE_URL = 'http://127.0.0.1:8080/homemaker/api';
+// const BASE_URL = 'http://120.53.84.167/homemaker/api';
 
 // API路由配置
 export const API = {
+  // 便捷登录接口
+  login: `${BASE_URL}/wx/login`,
+  
   // 微信登录相关接口
   wx: {
     // 登录接口

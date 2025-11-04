@@ -50,15 +50,19 @@ public class WxLoginServiceImpl implements WxLoginService {
     public Map<String, Object> wxLogin(Map<String, Object> loginData) {
         try {
             String code = loginData.getOrDefault("code", "").toString();
-            Integer role = loginData.getOrDefault("role", 1) instanceof Integer ?
-                    (Integer) loginData.get("role") : Integer.parseInt(loginData.get("role").toString());
+            // 解析角色参数，支持null值（自动识别模式）
+            Object roleObj = loginData.get("role");
+            Integer role = null;
+            if (roleObj != null) {
+                role = roleObj instanceof Integer ? (Integer) roleObj : Integer.parseInt(roleObj.toString());
+            }
             
             // 从userInfo对象中获取用户信息
             Map<String, Object> userInfo = (Map<String, Object>) loginData.getOrDefault("userInfo", new HashMap<>());
             String name = (String) userInfo.getOrDefault("nickName", "");
             String avatarUrl = (String) userInfo.getOrDefault("avatarUrl", "");
 
-            // 调用微信接口获取openid
+            // 调用微信接口获取openid和session_key
             JSONObject wxResult = wxLoginUtil.jscode2session(appid, secret, code);
             
             // 检查是否有错误
@@ -67,27 +71,112 @@ public class WxLoginServiceImpl implements WxLoginService {
             }
             
             String openid = wxResult.getString("openid");
+            String sessionKey = wxResult.getString("session_key");
+            
+            // 处理微信手机号授权
+            String phone = null;
+            Object encryptedDataObj = loginData.get("encryptedData");
+            Object ivObj = loginData.get("iv");
+            
+            if (encryptedDataObj != null && ivObj != null) {
+                String encryptedData = encryptedDataObj.toString();
+                String iv = ivObj.toString();
+                
+                // 解密手机号
+                try {
+                    JSONObject phoneInfo = wxLoginUtil.decryptPhoneNumber(encryptedData, sessionKey, iv);
+                    if (phoneInfo != null) {
+                        phone = phoneInfo.getString("phoneNumber");
+                    }
+                } catch (Exception e) {
+                    // 解密失败不影响登录，但记录日志
+                    System.err.println("手机号解密失败: " + e.getMessage());
+                }
+            }
+            
+            // 如果解密失败，尝试直接从loginData获取phone
+            if (phone == null) {
+                Object phoneObj = loginData.get("phone");
+                if (phoneObj != null) {
+                    phone = phoneObj.toString();
+                }
+            }
             
             // 根据角色查询不同的表
             Object userObj = null;
             Long userId = null;
             
-            if (role == 1) { // 用户角色
+            // 1. 自动识别角色模式
+            if (role == null) {
+                System.out.println("自动识别角色，openid: " + openid);
+                
+                // 先查询用户表
+                User user = userService.findByOpenid(openid);
+                if (user != null) {
+                    System.out.println("自动识别成功：用户角色");
+                    // 识别为用户角色
+                    role = 1;
+                    userObj = user;
+                    userId = user.getId();
+                    
+                    // 如果用户存在但没有手机号，更新手机号
+                    if (phone != null && (user.getPhone() == null || user.getPhone().isEmpty())) {
+                        user.setPhone(phone);
+                        user.setUpdateTime(new Date());
+                        userService.updateById(user);
+                    }
+                }
+                
+                // 如果用户不存在，查询护工表
+                if (userObj == null) {
+                    Nurse nurse = nurseService.findByOpenid(openid);
+                    if (nurse != null) {
+                        System.out.println("自动识别成功：护工角色");
+                        // 识别为护工角色
+                        role = 2;
+                        userObj = nurse;
+                        userId = nurse.getId();
+                        
+                        // 如果护工存在但没有手机号，更新手机号
+                        if (phone != null && (nurse.getPhone() == null || nurse.getPhone().isEmpty())) {
+                            nurse.setPhone(phone);
+                            nurse.setUpdateTime(new Date());
+                            nurseService.updateById(nurse);
+                        }
+                    }
+                }
+                
+                // 如果用户和护工都不存在，抛出异常让controller处理
+                if (userObj == null) {
+                    throw new RuntimeException("未找到用户信息");
+                }
+            }
+            // 2. 指定角色登录模式
+            else if (role == 1) { // 用户角色
                 User user = userService.findByOpenid(openid);
                 
                 if (user == null) {
                     // 如果用户不存在，创建新用户
-                    String phone = (String) loginData.get("phone");
                     String address = (String) loginData.get("address");
                     user = new User();
+                    // 用户ID将由数据库自动生成
                     user.setName(name);
                     user.setAvatarUrl(avatarUrl);
                     user.setOpenid(openid);
-                    user.setPhone(phone);
+                    user.setPhone(phone != null ? phone : ""); // 确保phone字段不为null
                     user.setAddress(address);
                     user.setCreateTime(new Date());
                     user.setUpdateTime(new Date());
                     userService.save(user);
+                    // 保存后，确保获取到自动生成的ID
+                    userId = user.getId();
+                } else {
+                    // 如果用户存在但没有手机号，更新手机号
+                    if (user.getPhone() == null || user.getPhone().isEmpty()) {
+                        user.setPhone(phone != null ? phone : "");
+                        user.setUpdateTime(new Date());
+                        userService.updateById(user);
+                    }
                 }
                 
                 userObj = user;
@@ -97,8 +186,8 @@ public class WxLoginServiceImpl implements WxLoginService {
                 
                 if (nurse == null) {
                     // 如果护工不存在，创建新护工
-                    String phone = (String) loginData.get("phone");
-                    int age = (int) loginData.get("age");
+                    int age = loginData.get("age") instanceof Integer ? 
+                            (Integer) loginData.get("age") : 0;
                     // 处理serviceTypeId的类型转换，支持Integer和Long类型
                     Object serviceTypeIdObj = loginData.get("serviceTypeId");
                     Long serviceTypeId = null;
@@ -108,10 +197,15 @@ public class WxLoginServiceImpl implements WxLoginService {
                         serviceTypeId = ((Integer) serviceTypeIdObj).longValue();
                     } else if (serviceTypeIdObj instanceof String) {
                         // 也支持字符串类型的输入
-                        serviceTypeId = Long.parseLong((String) serviceTypeIdObj);
+                        try {
+                            serviceTypeId = Long.parseLong((String) serviceTypeIdObj);
+                        } catch (NumberFormatException e) {
+                            serviceTypeId = null;
+                        }
                     }
                     nurse = new Nurse();
-                    nurse.setPhone(phone);
+                    // 护工ID将由数据库自动生成
+                    nurse.setPhone(phone != null ? phone : ""); // 确保phone字段不为null
                     nurse.setName(name);
                     nurse.setAge(age);
                     nurse.setAvatarUrl(avatarUrl);
@@ -121,10 +215,21 @@ public class WxLoginServiceImpl implements WxLoginService {
                     nurse.setCreateTime(new Date());
                     nurse.setUpdateTime(new Date());
                     nurseService.save(nurse);
+                    // 保存后，确保获取到自动生成的ID
+                    userId = nurse.getId();
+                } else {
+                    // 如果护工存在但没有手机号，更新手机号
+                    if (nurse.getPhone() == null || nurse.getPhone().isEmpty()) {
+                        nurse.setPhone(phone != null ? phone : "");
+                        nurse.setUpdateTime(new Date());
+                        nurseService.updateById(nurse);
+                    }
                 }
                 
                 userObj = nurse;
                 userId = nurse.getId();
+            } else {
+                throw new RuntimeException("无效的角色标识");
             }
             
             // 生成token
@@ -148,6 +253,10 @@ public class WxLoginServiceImpl implements WxLoginService {
             return result;
             
         } catch (Exception e) {
+            // 如果是用户不存在的错误，包装为RuntimeException抛出，让controller特殊处理
+            if (e.getMessage() != null && e.getMessage().contains("未找到用户信息")) {
+                throw new RuntimeException(e.getMessage(), e);
+            }
             throw new RuntimeException("微信登录失败: " + e.getMessage());
         }
     }

@@ -72,11 +72,15 @@ CREATE TABLE IF NOT EXISTS `order` (
   `payment_time` varchar(50) DEFAULT NULL COMMENT '支付时间',
   `start_time` varchar(50) DEFAULT NULL COMMENT '服务开始时间',
   `end_time` varchar(50) DEFAULT NULL COMMENT '服务结束时间',
+  `service_duration` int DEFAULT NULL COMMENT '服务时长（单位：分钟）',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_order_no` (`order_no`)
 ) ENGINE=InnoDB AUTO_INCREMENT=50001 DEFAULT CHARSET=utf8mb4 COMMENT='订单表';
+
+ALTER TABLE `order` 
+ADD COLUMN `service_duration` INT DEFAULT NULL COMMENT '服务时长（单位：分钟）';
 
 -- 评价表
 CREATE TABLE IF NOT EXISTS `evaluation` (

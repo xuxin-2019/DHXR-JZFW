@@ -47,8 +47,8 @@ swagger:
 # 微信小程序配置
 wechat:
   mini:
-    appid: wx0c6c16721197351e
-    secret: 28fd69331b2b11288c611e38f3ce3a17
+    appid: wx2c30d8dbc07248f2
+    secret: 4a0e4fa4032dc4b5d7ec9ce04fc611f7
 
 # 登录拦截器配置
 login:

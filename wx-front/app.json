@@ -1,6 +1,7 @@
 {
   "pages": [
     "pages/index/index",
+    "pages/quick-login/quick-login",
     "pages/login/login",
     "pages/logs/logs",
     "pages/service-request/service-request",

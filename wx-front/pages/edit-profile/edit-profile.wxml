@@ -23,15 +23,9 @@
     <!-- 通用字段：电话 -->
     <view class="form-item">
       <view class="form-label">电话</view>
-      <input 
-        class="form-input" 
-        placeholder="请输入手机号码"
-        value="{{formData.phone}}"
-        data-field="phone"
-        bindinput="onInput"
-        type="number"
-        maxlength="11"
-      />
+      <view class="form-input readonly">
+        {{formData.phone || '未设置'}}
+      </view>
     </view>
 
     <!-- 用户角色特有字段：地址 -->

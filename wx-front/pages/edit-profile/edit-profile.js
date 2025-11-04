@@ -219,7 +219,6 @@ Page({
       requestData = {
         id: userId,
         name: formData.name,
-        phone: formData.phone,
         address: formData.address
       };
     } else if (userRole === '2') {
@@ -228,7 +227,6 @@ Page({
       requestData = {
         id: userId,
         name: formData.name,
-        phone: formData.phone,
         age: formData.age,
         serviceTypeId: formData.serviceTypeId
       };
@@ -285,28 +283,10 @@ Page({
   validateForm() {
     const { formData, userRole } = this.data;
     
-    // 通用验证：姓名和电话
+    // 通用验证：姓名
     if (!formData.name.trim()) {
       wx.showToast({
         title: '请输入姓名',
-        icon: 'none'
-      });
-      return false;
-    }
-    
-    if (!formData.phone.trim()) {
-      wx.showToast({
-        title: '请输入电话',
-        icon: 'none'
-      });
-      return false;
-    }
-    
-    // 手机号格式验证
-    const phoneRegex = /^1[3-9]\d{9}$/;
-    if (!phoneRegex.test(formData.phone)) {
-      wx.showToast({
-        title: '请输入正确的手机号',
         icon: 'none'
       });
       return false;

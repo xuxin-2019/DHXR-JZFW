@@ -1,12 +1,17 @@
 package com.homemaker.util;
 
 import com.alibaba.fastjson.JSONObject;
+import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.stereotype.Component;
 
+import javax.crypto.Cipher;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 /**
@@ -53,5 +58,33 @@ public class WxLoginUtil {
         
         // 解析JSON响应
         return JSONObject.parseObject(response.toString());
+    }
+    
+    /**
+     * 解密微信手机号
+     * @param encryptedData 加密数据
+     * @param sessionKey 会话密钥
+     * @param iv 初始向量
+     * @return 解密后的手机号信息
+     * @throws Exception 解密异常
+     */
+    public JSONObject decryptPhoneNumber(String encryptedData, String sessionKey, String iv) throws Exception {
+        // Base64解码
+        byte[] encryptedDataBytes = Base64.decodeBase64(encryptedData);
+        byte[] sessionKeyBytes = Base64.decodeBase64(sessionKey);
+        byte[] ivBytes = Base64.decodeBase64(iv);
+        
+        // 创建解密算法实例
+        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+        SecretKeySpec secretKeySpec = new SecretKeySpec(sessionKeyBytes, "AES");
+        IvParameterSpec ivParameterSpec = new IvParameterSpec(ivBytes);
+        cipher.init(Cipher.DECRYPT_MODE, secretKeySpec, ivParameterSpec);
+        
+        // 解密
+        byte[] decryptedBytes = cipher.doFinal(encryptedDataBytes);
+        String decryptedStr = new String(decryptedBytes, StandardCharsets.UTF_8);
+        
+        // 解析JSON
+        return JSONObject.parseObject(decryptedStr);
     }
 }

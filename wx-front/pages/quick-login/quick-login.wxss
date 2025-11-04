@@ -1,0 +1,138 @@
+/* quick-login.wxss */
+
+/* 页面容器 */
+.container {
+  min-height: 100vh;
+  background-color: #f8f8f8;
+  display: flex;
+  flex-direction: column;
+  padding: 40rpx;
+  box-sizing: border-box;
+}
+
+/* 头部样式 */
+.header {
+  text-align: center;
+  margin-top: 60rpx;
+  margin-bottom: 80rpx;
+}
+
+.title {
+  font-size: 48rpx;
+  font-weight: bold;
+  color: #333;
+}
+
+/* 表单容器 */
+.form-container {
+  background-color: #fff;
+  border-radius: 16rpx;
+  padding: 40rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.08);
+}
+
+/* 表单项样式 */
+.form-item {
+  margin-bottom: 40rpx;
+}
+
+.label {
+  display: block;
+  font-size: 28rpx;
+  color: #666;
+  margin-bottom: 20rpx;
+}
+
+.required {
+  color: #e64340;
+}
+
+/* 角色选择样式 */
+.radio-group {
+  display: flex;
+  gap: 40rpx;
+}
+
+radio-group label {
+  display: flex;
+  align-items: center;
+  font-size: 28rpx;
+  color: #333;
+}
+
+radio-group radio {
+  margin-right: 8rpx;
+  transform: scale(0.8);
+}
+
+/* 登录按钮区域 */
+.login-section {
+  margin: 60rpx 0;
+}
+
+.login-btn {
+  width: 100%;
+  height: 90rpx;
+  background-color: #1aad19;
+  color: #fff;
+  font-size: 32rpx;
+  border-radius: 45rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4rpx 12rpx rgba(26, 173, 25, 0.3);
+}
+
+.login-btn:active {
+  background-color: #179b16;
+}
+
+.login-btn[disabled] {
+  background-color: #d1d1d1;
+  box-shadow: none;
+}
+
+/* 协议区域 */
+.agreement-section {
+  margin-top: 40rpx;
+}
+
+.checkbox-group {
+  display: flex;
+  align-items: flex-start;
+  font-size: 24rpx;
+  color: #999;
+}
+
+checkbox {
+  margin-top: 4rpx;
+  margin-right: 10rpx;
+  transform: scale(0.8);
+}
+
+.agreement-text {
+  flex: 1;
+  line-height: 1.5;
+}
+
+.link {
+  color: #1aad19;
+  text-decoration: underline;
+}
+
+/* 错误信息 */
+.error-message {
+  display: block;
+  margin-top: 30rpx;
+  color: #e64340;
+  font-size: 24rpx;
+  text-align: center;
+}
+
+/* 适配不同屏幕 */
+@media (min-width: 768px) {
+  .container {
+    max-width: 768rpx;
+    margin: 0 auto;
+  }
+}

@@ -90,6 +90,139 @@ Page({
   onLoad: function(options) {
     // 页面加载时的初始化逻辑
     console.log('首页加载成功');
+
+    // 先检查本地是否有登录信息，而不是默认设置为未登录
+    const token = wx.getStorageSync('token');
+    const userRole = wx.getStorageSync('userRole');
+    
+    // 初始化登录状态 - 默认显示为已登录（不显示登录按钮），除非确认未登录
+    this.setData({
+      isLoggedIn: true
+    });
+    
+    // 检查是否已登录
+    this.checkLoginStatus();
+  },
+  
+  /**
+   * 检查登录状态
+   * 如果未登录，尝试自动登录
+   */
+  checkLoginStatus() {
+    const token = wx.getStorageSync('token');
+    const userRole = wx.getStorageSync('userRole');
+    
+    if (token && userRole) {
+      // 已登录状态 - 确认登录状态
+      this.setData({
+        isLoggedIn: true
+      });
+      console.log('用户已登录');
+    } else {
+      // 未登录状态，尝试自动登录
+      console.log('用户未登录，尝试自动登录');
+      this.tryAutoLogin();
+    }
+  },
+  
+  /**
+   * 尝试自动登录
+   * 1. 获取微信code
+   * 2. 获取openid
+   * 3. 查询用户是否已在系统中注册
+   * 4. 如果已注册，自动调用登录接口
+   */
+  async tryAutoLogin() {
+    try {
+      // 1. 获取微信code
+      const loginRes = await this.getWxCode();
+      if (!loginRes.code) {
+        console.error('获取微信code失败');
+        return;
+      }
+      
+      console.log('获取微信code成功:', loginRes.code);
+      
+      // 2. 获取openid（这里直接将code传给后端）
+      // 创建登录数据对象
+      const loginData = {
+        code: loginRes.code,
+        // 暂时不指定角色，由后端判断
+        role: null
+      };
+      
+      // 3. 尝试查询用户是否已存在
+      // 调用登录接口，让后端自动判断用户是否存在并返回相应角色
+      const requestData = {
+        code: loginRes.code,
+        // 为了触发后端的用户存在性检查，我们不传递具体角色
+        // 让后端通过openid或手机号查询用户是否存在
+      };
+      
+      // 发送请求到登录接口
+      wx.request({
+        url: 'http://127.0.0.1:8080/homemaker/api/wx/login',
+        method: 'POST',
+        data: requestData,
+        header: {
+          'content-type': 'application/json'
+        },
+        success: (res) => {
+          if (res.data && res.data.code === 200 && res.data.data) {
+            // 登录成功，保存用户信息
+            wx.setStorageSync('token', res.data.data.token);
+            wx.setStorageSync('userInfo', res.data.data.userInfo || {});
+            wx.setStorageSync('userId', res.data.data.id || '');
+            // 将角色转换为字符串类型保存，确保与前端条件判断一致
+            wx.setStorageSync('userRole', (res.data.data.role || '').toString());
+            
+            this.setData({
+              isLoggedIn: true
+            });
+            
+            console.log('自动登录成功，用户角色:', res.data.data.role);
+            wx.showToast({
+              title: '登录成功',
+              icon: 'success'
+            });
+          } else {
+            // 登录失败，可能是用户不存在
+            console.log('自动登录失败，用户可能未注册:', res.data?.message);
+            // 确认用户未注册时，才显示登录按钮
+            this.setData({
+              isLoggedIn: false
+            });
+            // 不显示错误提示，保持静默
+          }
+        },
+        fail: (error) => {
+          console.error('自动登录请求失败:', error);
+          // 网络错误且确实未登录时，才显示登录按钮
+          this.setData({
+            isLoggedIn: false
+          });
+        }
+      });
+    } catch (error) {
+      console.error('自动登录过程中发生错误:', error);
+    }
+  },
+  
+  /**
+   * 获取微信登录code
+   * @returns Promise 包含code的对象
+   */
+  getWxCode() {
+    return new Promise((resolve, reject) => {
+      wx.login({
+        success: (res) => {
+          resolve(res);
+        },
+        fail: (error) => {
+          reject(error);
+        }
+      });
+    });
   },
   
   /**
@@ -97,6 +230,10 @@ Page({
    * 实现完整的登录流程：获取用户信息 -> 获取code -> 跳转到信息填写页面
    */
   handleLogin() {
+    if (this.data.isLoggedIn) {
+      console.log('用户已登录，无需重复登录');
+      return;
+    }
     // 检查是否可以使用getUserProfile API
     if (!this.data.canIUseGetUserProfile) {
       wx.showToast({
@@ -122,9 +259,9 @@ Page({
               wx.setStorageSync('tempUserInfo', profileRes.userInfo);
               wx.setStorageSync('tempCode', loginRes.code);
               
-              // 4. 跳转到登录信息填写页面 - 使用redirectTo避免webview数量超限
+              // 4. 跳转到一键登录页面 - 使用redirectTo避免webview数量超限
               wx.redirectTo({
-                url: '../login/login'
+                url: '../quick-login/quick-login'
               });
             } else {
               console.error('获取登录code失败:', loginRes);
