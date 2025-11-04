@@ -1,5 +1,41 @@
+// 配置axios拦截器，处理登录过期等全局响应
+axios.interceptors.response.use(
+    response => {
+        // 正常响应处理
+        return response;
+    },
+    error => {
+        // 错误响应处理
+        if (error.response) {
+            // 检查是否是401状态码或包含登录过期的消息
+            if (error.response.status === 401 || 
+                (error.response.data && 
+                 (error.response.data.code === 401 || 
+                  (error.response.data.message && 
+                   error.response.data.message.includes('登录已过期'))))) {
+                
+                // 清除过期的token
+                localStorage.removeItem('token');
+                
+                // 显示提示消息
+                if (window.vm && window.vm.$message) {
+                    window.vm.$message.error('登录已过期，请重新登录');
+                } else {
+                    alert('登录已过期，请重新登录');
+                }
+                
+                // 跳转到登录页面
+                setTimeout(() => {
+                    window.location.href = '/homemaker';
+                }, 1000);
+            }
+        }
+        return Promise.reject(error);
+    }
+);
+
 // 创建Vue实例
-new Vue({
+window.vm = new Vue({
     el: '#app',
     data: {
         // 登录状态和管理员信息

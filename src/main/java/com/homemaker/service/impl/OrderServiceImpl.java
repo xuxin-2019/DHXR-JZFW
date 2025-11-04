@@ -131,12 +131,16 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         // 获取现有订单
         Order existingOrder = getById(order.getId());
         if (existingOrder != null) {
-            // 更新允许修改的字段：服务类型、服务时间、开始时间、结束时间和服务地址
+            // 更新允许修改的字段：服务类型、服务时间、开始时间、结束时间、服务地址和服务时长
             existingOrder.setServiceTypeId(order.getServiceTypeId());
             existingOrder.setServiceTime(order.getServiceTime());
             existingOrder.setStartTime(order.getStartTime());
             existingOrder.setEndTime(order.getEndTime());
             existingOrder.setServiceAddress(order.getServiceAddress());
+            // 如果传入了服务时长，则更新
+            if (order.getServiceDuration() != null) {
+                existingOrder.setServiceDuration(order.getServiceDuration());
+            }
             existingOrder.setUpdateTime(new Date());
             
             return updateById(existingOrder);

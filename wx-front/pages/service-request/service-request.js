@@ -16,24 +16,18 @@ Page({
     serviceId: '',
     // 服务名称
     serviceName: '',
-    // 服务价格
-    servicePrice: 0,
-    // 服务时长
-    serviceDuration: 0,
+    // 期望服务金额
+    expectedPrice: '',
+    // 期望服务时长（分钟）
+    expectedDuration: '',
     // 服务地址
     serviceAddress: '',
-    // 服务开始日期
-    startDate: '',
-    // 服务开始时间（时分）
-    startTimeHourMinute: '',
-    // 服务结束日期
-    endDate: '',
-    // 服务结束时间（时分）
-    endTimeHourMinute: '',
-    // 完整的开始时间（提交用）
-    startTime: '',
-    // 完整的结束时间（提交用）
-    endTime: '',
+    // 期望服务日期
+    expectedDate: '',
+    // 期望服务时间（时分）
+    expectedTimeHourMinute: '',
+    // 完整的期望服务时间（提交用）
+    expectedTime: '',
     // 加载状态
     loading: false,
     // 当前日期（用于时间选择器的起始时间）
@@ -60,8 +54,6 @@ Page({
    * 获取服务详情
    */
   getServiceInfo: function() {
-    const { serviceId } = this.data;
-    
     this.setData({
       loading: true
     });
@@ -77,38 +69,11 @@ Page({
     this.setData({
       currentDate: `${year}-${month}-${day}`,
       // 默认为当前时间
-      startTimeHourMinute: `${hours}:${minutes}`,
-      endTimeHourMinute: `${hours}:${minutes}`
+      expectedTimeHourMinute: `${hours}:${minutes}`,
+      loading: false
     });
     
-    request(`${API.serviceType.info}?id=${serviceId}`, {
-      method: 'GET'
-    }).then(res => {
-      console.log('获取服务详情成功:', res);
-      
-      if (res.code === 200 && res.data) {
-        // 更新服务信息
-        this.setData({
-          servicePrice: res.data.price || 0,
-          serviceDuration: res.data.duration || 0
-        });
-      } else {
-        wx.showToast({
-          title: res.message || '获取服务信息失败',
-          icon: 'none'
-        });
-      }
-    }).catch(err => {
-      console.error('获取服务详情失败:', err);
-      wx.showToast({
-        title: '网络异常，请检查网络连接',
-        icon: 'none'
-      });
-    }).finally(() => {
-      this.setData({
-        loading: false
-      });
-    });
+    // 不再获取服务详情，用户手动输入所有信息
   },
 
   /**
@@ -121,73 +86,55 @@ Page({
   },
 
   /**
-   * 监听开始日期输入变化
+   * 监听期望服务金额输入变化
    */
-  onStartDateChange: function(e) {
+  onExpectedPriceChange: function(e) {
+    this.setData({
+      expectedPrice: e.detail.value
+    });
+  },
+
+  /**
+   * 监听期望服务时长输入变化
+   */
+  onExpectedDurationChange: function(e) {
+    this.setData({
+      expectedDuration: e.detail.value
+    });
+  },
+
+  /**
+   * 监听期望服务日期输入变化
+   */
+  onExpectedDateChange: function(e) {
     const date = e.detail.value;
     this.setData({
-      startDate: date
+      expectedDate: date
     });
-    // 更新完整的开始时间
-    this.updateStartTime();
+    // 更新完整的期望服务时间
+    this.updateExpectedTime();
   },
 
   /**
-   * 监听开始时间（时分）输入变化
+   * 监听期望服务时间（时分）输入变化
    */
-  onStartTimeChange: function(e) {
+  onExpectedTimeChange: function(e) {
     const time = e.detail.value;
     this.setData({
-      startTimeHourMinute: time
+      expectedTimeHourMinute: time
     });
-    // 更新完整的开始时间
-    this.updateStartTime();
+    // 更新完整的期望服务时间
+    this.updateExpectedTime();
   },
 
   /**
-   * 监听结束日期输入变化
+   * 更新完整的期望服务时间
    */
-  onEndDateChange: function(e) {
-    const date = e.detail.value;
-    this.setData({
-      endDate: date
-    });
-    // 更新完整的结束时间
-    this.updateEndTime();
-  },
-
-  /**
-   * 监听结束时间（时分）输入变化
-   */
-  onEndTimeChange: function(e) {
-    const time = e.detail.value;
-    this.setData({
-      endTimeHourMinute: time
-    });
-    // 更新完整的结束时间
-    this.updateEndTime();
-  },
-
-  /**
-   * 更新完整的开始时间
-   */
-  updateStartTime: function() {
-    const { startDate, startTimeHourMinute } = this.data;
-    if (startDate && startTimeHourMinute) {
+  updateExpectedTime: function() {
+    const { expectedDate, expectedTimeHourMinute } = this.data;
+    if (expectedDate && expectedTimeHourMinute) {
       this.setData({
-        startTime: `${startDate} ${startTimeHourMinute}`
-      });
-    }
-  },
-
-  /**
-   * 更新完整的结束时间
-   */
-  updateEndTime: function() {
-    const { endDate, endTimeHourMinute } = this.data;
-    if (endDate && endTimeHourMinute) {
-      this.setData({
-        endTime: `${endDate} ${endTimeHourMinute}`
+        expectedTime: `${expectedDate} ${expectedTimeHourMinute}`
       });
     }
   },
@@ -196,7 +143,7 @@ Page({
    * 表单验证
    */
   validateForm: function() {
-    const { serviceAddress, startDate, startTimeHourMinute, endDate, endTimeHourMinute, startTime, endTime } = this.data;
+    const { serviceAddress, expectedPrice, expectedDuration, expectedDate, expectedTimeHourMinute, expectedTime } = this.data;
     
     // 验证地址
     if (!serviceAddress.trim()) {
@@ -207,52 +154,51 @@ Page({
       return false;
     }
     
-    // 验证开始日期
-    if (!startDate) {
+    // 验证期望服务金额
+    if (!expectedPrice || isNaN(expectedPrice) || parseFloat(expectedPrice) <= 0) {
       wx.showToast({
-        title: '请选择服务开始日期',
+        title: '请输入有效的期望服务金额',
         icon: 'none'
       });
       return false;
     }
     
-    // 验证开始时间（时分）
-    if (!startTimeHourMinute) {
+    // 验证期望服务时长
+    if (!expectedDuration || isNaN(expectedDuration) || parseInt(expectedDuration) <= 0) {
       wx.showToast({
-        title: '请选择服务开始时间',
+        title: '请输入有效的期望服务时长',
         icon: 'none'
       });
       return false;
     }
     
-    // 验证结束日期
-    if (!endDate) {
+    // 验证期望服务日期
+    if (!expectedDate) {
       wx.showToast({
-        title: '请选择服务结束日期',
+        title: '请选择期望服务日期',
         icon: 'none'
       });
       return false;
     }
     
-    // 验证结束时间（时分）
-    if (!endTimeHourMinute) {
+    // 验证期望服务时间（时分）
+    if (!expectedTimeHourMinute) {
       wx.showToast({
-        title: '请选择服务结束时间',
+        title: '请选择期望服务时间',
         icon: 'none'
       });
       return false;
     }
     
     // 确保完整时间已更新
-    this.updateStartTime();
-    this.updateEndTime();
+    this.updateExpectedTime();
     
-    // 验证结束时间是否晚于开始时间
-    const startDateTime = new Date(startTime.replace(' ', 'T'));
-    const endDateTime = new Date(endTime.replace(' ', 'T'));
-    if (endDateTime <= startDateTime) {
+    // 验证期望服务时间是否晚于当前时间
+    const expectedDateTime = new Date(expectedTime.replace(' ', 'T'));
+    const now = new Date();
+    if (expectedDateTime <= now) {
       wx.showToast({
-        title: '结束时间必须晚于开始时间',
+        title: '期望服务时间必须晚于当前时间',
         icon: 'none'
       });
       return false;
@@ -270,7 +216,7 @@ Page({
       return;
     }
     
-    const { serviceId, serviceName, serviceAddress, startTime, endTime, servicePrice } = this.data;
+    const { serviceId, serviceName, serviceAddress, expectedTime, expectedPrice, expectedDuration } = this.data;
     
     // 获取token
     const token = wx.getStorageSync('token');
@@ -290,11 +236,13 @@ Page({
     const requestData = {
       userId: wx.getStorageSync('userId'),
       serviceTypeId: serviceId,
-      totalAmount: servicePrice,
+      totalAmount: parseFloat(expectedPrice),
       serviceAddress: serviceAddress,
-      startTime: startTime + ':00', // 后台需要秒，添加:00
-      endTime: endTime + ':00' // 后台需要秒，添加:00
+      serviceTime: expectedTime + ':00', // 期望服务时间，后台需要秒，添加:00
+      serviceDuration: parseInt(expectedDuration) // 服务时长（单位：分钟）
     };
+    
+    console.log('提交的订单数据:', requestData);
     
     // 调用创建订单接口
     request(API.order.create, {

@@ -62,21 +62,21 @@
       <!-- 订单时间信息 -->
       <view class="order-time">
         <view class="time-row">
-          <text class="time-label">服务开始：</text>
-          <text class="time-value">{{item.startTimeFormatted}}</text>
+          <text class="time-label">服务时间：</text>
+          <text class="time-value">{{item.serviceTimeFormatted}}</text>
         </view>
         <view class="time-row">
-          <text class="time-label">服务结束：</text>
-          <text class="time-value">{{item.endTimeFormatted}}</text>
+          <text class="time-label">服务时长：</text>
+          <text class="time-value">{{item.serviceDurationFormatted}}</text>
         </view>
       </view>
 
       <!-- 订单底部 -->
       <view class="order-footer">
         <text class="order-date">{{item.createTime ? item.createTime.split(' ')[0] : ''}}</text>
-        <!-- 已接单状态下显示联系护工按钮 -->
-        <view wx:if="{{item.status === 3 || (item.statusInfo && item.statusInfo.code === 3)}}" class="action-buttons">
-          <view class="contact-btn" data-phone="{{item.nursePhone}}" bindtap="contactCaregiver">联系护工</view>
+        <!-- 所有状态下显示联系客服按钮 -->
+        <view class="action-buttons">
+          <view class="contact-btn" data-phone="13311090981" bindtap="contactCaregiver">联系客服</view>
         </view>
         <!-- 已完成状态下显示去评价按钮 -->
         <view wx:if="{{item.status === 5 || (item.statusInfo && item.statusInfo.code === 5)}}" class="action-buttons">

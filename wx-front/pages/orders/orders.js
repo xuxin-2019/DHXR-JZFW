@@ -189,14 +189,23 @@ Page({
     });
     
     return filteredOrders.map(order => {
+      // 确定服务时间（优先使用新字段，兼容旧数据）
+      let serviceTimeFormatted = '';
+      if (order.serviceTime) {
+        serviceTimeFormatted = this.formatDateTime(order.serviceTime);
+      } else if (order.startTime) {
+        serviceTimeFormatted = this.formatDateTime(order.startTime);
+      }
+      
       return {
         ...order,
         // 映射服务类型和金额字段，确保与WXML模板匹配
         serviceName: order.serviceTypeName || order.serviceType || '',
         amount: order.totalAmount || order.price || 0,
-        // 格式化日期时间
-        startTimeFormatted: this.formatDateTime(order.startTime),
-        endTimeFormatted: this.formatDateTime(order.endTime),
+        // 服务时间
+        serviceTimeFormatted: serviceTimeFormatted,
+        // 服务时长（单位：分钟）
+        serviceDurationFormatted: order.serviceDuration ? `${order.serviceDuration}分钟` : '',
         // 获取状态文本和颜色
         statusInfo: statusMap[order.status] || { text: '未知状态', color: '#9e9e9e' }
       };
@@ -435,8 +444,8 @@ Page({
   },
   
   /**
-   * 联系护工
-   * 点击联系护工按钮时调用，弹出护工电话号码模态框
+   * 联系客服
+   * 点击联系客服按钮时调用，弹出客服电话号码模态框
    */
   contactCaregiver: function(e) {
     const phoneNumber = e.currentTarget.dataset.phone;
@@ -444,7 +453,7 @@ Page({
     // 检查是否有电话号码
     if (!phoneNumber) {
       wx.showToast({
-        title: '未获取到护工电话',
+        title: '未获取到客服电话',
         icon: 'none'
       });
       return;
@@ -452,8 +461,8 @@ Page({
     
     // 弹出模态框显示电话号码并提供拨打电话选项
     wx.showModal({
-      title: '联系护工',
-      content: `护工电话：${phoneNumber}`,
+      title: '联系客服',
+      content: `客服电话：${phoneNumber}`,
       showCancel: true,
       cancelText: '取消',
       confirmText: '拨打电话',

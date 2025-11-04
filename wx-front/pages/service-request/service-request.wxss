@@ -56,6 +56,30 @@
   font-weight: bold;
 }
 
+.info-input {
+  font-size: 32rpx;
+  color: #333;
+  font-weight: 500;
+  border: 1rpx solid #e8e8e8;
+  border-radius: 8rpx;
+  padding: 8rpx 16rpx;
+  background-color: #fafafa;
+  flex: 1;
+  margin-left: 20rpx;
+  text-align: right;
+}
+
+.info-input.price {
+  color: #ff4d4f;
+  font-size: 36rpx;
+  font-weight: bold;
+}
+
+.info-input:focus {
+  border-color: #667eea;
+  background-color: #fff;
+}
+
 /* 表单容器 */
 .form-container {
   background-color: #fff;

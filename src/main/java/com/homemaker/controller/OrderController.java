@@ -29,11 +29,11 @@ public class OrderController extends BaseController {
 
     /**
      * 创建订单
-     * @param order 订单信息
+     * @param order 订单信息，包含服务时长（serviceDuration）字段
      * @return 创建结果
      */
     @PostMapping("/create")
-    @Operation(summary = "创建订单", description = "创建新的订单")
+    @Operation(summary = "创建订单", description = "创建新的订单，支持传入serviceDuration（服务时长，单位：分钟）")
     public Result createOrder(@RequestBody Order order) {
         boolean result = orderService.createOrder(order);
         if (result) {

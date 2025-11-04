@@ -2,6 +2,9 @@ server:
   port: 8080
   servlet:
     context-path: /homemaker
+  # SSL配置已注释，避免启动失败
+  # ssl:
+  #   key-store-type: 
 
 spring:
   datasource:

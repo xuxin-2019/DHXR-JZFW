@@ -13,12 +13,24 @@
         <text class="info-value">{{serviceName}}</text>
       </view>
       <view class="info-item">
-        <text class="info-label">服务金额：</text>
-        <text class="info-value price">¥{{servicePrice}}</text>
+        <text class="info-label">期望服务金额：</text>
+        <input 
+          class="info-input price" 
+          type="digit" 
+          placeholder="请输入金额" 
+          value="{{expectedPrice}}" 
+          bindinput="onExpectedPriceChange"
+        ></input>
       </view>
-      <view class="info-item" wx:if="serviceDuration > 0">
-        <text class="info-label">服务时长：</text>
-        <text class="info-value">{{serviceDuration}}分钟</text>
+      <view class="info-item">
+        <text class="info-label">期望服务时长：</text>
+        <input 
+          class="info-input" 
+          type="number" 
+          placeholder="请输入时长（分钟）" 
+          value="{{expectedDuration}}" 
+          bindinput="onExpectedDurationChange"
+        ></input>
       </view>
     </view>
   </view>
@@ -37,62 +49,31 @@
     </view>
     
     <view class="form-item">
-      <text class="form-label">服务开始时间 *</text>
+      <text class="form-label">期望服务时间 *</text>
       <view class="time-picker-group">
-        <!-- 开始日期选择器 -->
+        <!-- 日期选择器 -->
         <picker 
           class="form-picker date-picker"
           mode="date" 
-          value="{{startDate}}" 
+          value="{{expectedDate}}" 
           start="{{currentDate}}"
-          bindchange="onStartDateChange"
+          bindchange="onExpectedDateChange"
           fields="day"
         >
           <view class="picker-content">
-            {{startDate ? startDate : '请选择日期'}}
+            {{expectedDate ? expectedDate : '请选择日期'}}
           </view>
         </picker>
         
-        <!-- 开始时间选择器 -->
+        <!-- 时间选择器 -->
         <picker 
           class="form-picker time-picker"
           mode="time" 
-          value="{{startTimeHourMinute}}" 
-          bindchange="onStartTimeChange"
+          value="{{expectedTimeHourMinute}}" 
+          bindchange="onExpectedTimeChange"
         >
           <view class="picker-content">
-            {{startTimeHourMinute ? startTimeHourMinute : '请选择时间'}}
-          </view>
-        </picker>
-      </view>
-    </view>
-    
-    <view class="form-item">
-      <text class="form-label">服务结束时间 *</text>
-      <view class="time-picker-group">
-        <!-- 结束日期选择器 -->
-        <picker 
-          class="form-picker date-picker"
-          mode="date" 
-          value="{{endDate}}" 
-          start="{{currentDate}}"
-          bindchange="onEndDateChange"
-          fields="day"
-        >
-          <view class="picker-content">
-            {{endDate ? endDate : '请选择日期'}}
-          </view>
-        </picker>
-        
-        <!-- 结束时间选择器 -->
-        <picker 
-          class="form-picker time-picker"
-          mode="time" 
-          value="{{endTimeHourMinute}}" 
-          bindchange="onEndTimeChange"
-        >
-          <view class="picker-content">
-            {{endTimeHourMinute ? endTimeHourMinute : '请选择时间'}}
+            {{expectedTimeHourMinute ? expectedTimeHourMinute : '请选择时间'}}
           </view>
         </picker>
       </view>

@@ -86,6 +86,11 @@ public class OrderVO {
     private String endTime;
 
     /**
+     * 服务时长（单位：分钟）
+     */
+    private Integer serviceDuration;
+
+    /**
      * 创建时间
      */
     private Date createTime;
