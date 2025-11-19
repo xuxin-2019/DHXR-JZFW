@@ -54,6 +54,22 @@ export const API = {
     // 获取护工订单列表
     list: `${BASE_URL}/order/nurseList`
   },
+  // 支付相关接口
+  payment: {
+    // 创建支付订单
+    create: `${BASE_URL}/payment/create`,
+    // 查询支付状态
+    status: `${BASE_URL}/payment/status`,
+    // 关闭支付订单
+    close: `${BASE_URL}/payment/close`
+  },
+  // 退款相关接口
+  refund: {
+    // 提交退款申请
+    apply: `${BASE_URL}/refund/apply`,
+    // 查询退款记录
+    records: `${BASE_URL}/refund/records`
+  },
   evaluation: {
     // 创建评价
     create: `${BASE_URL}/evaluation/create`

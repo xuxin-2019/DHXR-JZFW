@@ -1,0 +1,134 @@
+/* payment-result.wxss */
+
+/* 页面容器 */
+.result-container {
+  padding: 40rpx 20rpx;
+  background-color: #f5f5f5;
+  min-height: 100vh;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* 成功区域 */
+.success-section {
+  text-align: center;
+  padding: 60rpx 0;
+  width: 100%;
+}
+
+.success-title {
+  font-size: 40rpx;
+  font-weight: bold;
+  color: #333;
+  margin-top: 30rpx;
+}
+
+.success-desc {
+  font-size: 28rpx;
+  color: #666;
+  margin-top: 20rpx;
+}
+
+/* 失败区域 */
+.fail-section {
+  text-align: center;
+  padding: 60rpx 0;
+  width: 100%;
+}
+
+.fail-title {
+  font-size: 40rpx;
+  font-weight: bold;
+  color: #e64340;
+  margin-top: 30rpx;
+}
+
+.fail-desc {
+  font-size: 28rpx;
+  color: #666;
+  margin-top: 20rpx;
+}
+
+/* 订单信息区域 */
+.order-section {
+  background-color: #fff;
+  border-radius: 10rpx;
+  padding: 30rpx;
+  margin: 20rpx 0;
+  width: 100%;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.05);
+}
+
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 16rpx 0;
+  border-bottom: 1rpx solid #f0f0f0;
+  font-size: 28rpx;
+}
+
+.info-item:last-child {
+  border-bottom: none;
+}
+
+.label {
+  color: #666;
+}
+
+.value {
+  color: #333;
+}
+
+.amount {
+  color: #e64340;
+  font-size: 36rpx;
+  font-weight: bold;
+}
+
+/* 操作按钮区域 */
+.action-section {
+  width: 100%;
+  padding: 20rpx 0;
+  margin-top: 20rpx;
+}
+
+.action-section button {
+  margin-bottom: 20rpx;
+  border-radius: 8rpx;
+  font-size: 32rpx;
+  padding: 20rpx 0;
+}
+
+/* 提示信息区域 */
+.notice-section {
+  width: 100%;
+  margin-top: 40rpx;
+  padding: 20rpx;
+}
+
+.notice-title {
+  font-size: 28rpx;
+  color: #666;
+  margin-bottom: 10rpx;
+  display: block;
+}
+
+.notice-list {
+  font-size: 26rpx;
+  color: #999;
+  line-height: 1.6;
+}
+
+.notice-item {
+  margin-bottom: 10rpx;
+}
+
+/* 适配不同屏幕尺寸 */
+@media screen and (min-width: 768px) {
+  .result-container {
+    max-width: 768rpx;
+    margin: 0 auto;
+  }
+}

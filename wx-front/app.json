@@ -8,7 +8,10 @@
     "pages/orders/orders",
     "pages/profile/profile",
     "pages/edit-profile/edit-profile",
-    "pages/caregiver-orders/caregiver-orders"
+    "pages/caregiver-orders/caregiver-orders",
+    "pages/payment/payment",
+    "pages/payment-result/payment-result",
+    "pages/refund-apply/refund-apply"
   ],
   "window": {
     "navigationBarTextStyle": "black",

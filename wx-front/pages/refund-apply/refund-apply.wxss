@@ -1,0 +1,246 @@
+/* refund-apply.wxss */
+
+/* 页面容器 */
+.refund-container {
+  padding: 20rpx;
+  background-color: #f5f5f5;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+/* 加载中 */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 100rpx 0;
+}
+
+.loading-text {
+  margin-top: 20rpx;
+  font-size: 28rpx;
+  color: #666;
+}
+
+/* 通用区块样式 */
+.order-section,
+.form-section {
+  background-color: #fff;
+  border-radius: 10rpx;
+  padding: 30rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.05);
+}
+
+.section-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  margin-bottom: 20rpx;
+  color: #333;
+}
+
+/* 订单信息 */
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 16rpx 0;
+  border-bottom: 1rpx solid #f0f0f0;
+  font-size: 28rpx;
+}
+
+.info-item:last-child {
+  border-bottom: none;
+}
+
+.label {
+  color: #666;
+  flex-shrink: 0;
+}
+
+.value {
+  color: #333;
+  text-align: right;
+  flex: 1;
+  margin-left: 20rpx;
+}
+
+.total-amount {
+  font-weight: bold;
+  padding-top: 20rpx;
+  margin-top: 10rpx;
+}
+
+.total-amount .value {
+  color: #e64340;
+  font-size: 36rpx;
+}
+
+.refund-amount {
+  color: #e64340;
+  font-size: 36rpx;
+  font-weight: bold;
+}
+
+/* 退款原因 */
+.reason-type {
+  margin-bottom: 30rpx;
+}
+
+.reason-option {
+  display: flex;
+  align-items: center;
+  padding: 20rpx 0;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+.reason-option:last-child {
+  border-bottom: none;
+}
+
+.reason-label {
+  margin-left: 10rpx;
+  font-size: 28rpx;
+  color: #333;
+}
+
+/* 退款详情 */
+.reason-detail {
+  margin-top: 20rpx;
+}
+
+.reason-detail textarea {
+  width: 100%;
+  min-height: 200rpx;
+  padding: 20rpx;
+  border: 1rpx solid #ddd;
+  border-radius: 8rpx;
+  font-size: 28rpx;
+  color: #333;
+  box-sizing: border-box;
+}
+
+.textarea-footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10rpx;
+}
+
+.word-count {
+  font-size: 24rpx;
+  color: #999;
+}
+
+/* 错误提示 */
+.error-text {
+  color: #e64340;
+  font-size: 24rpx;
+  margin-top: 10rpx;
+}
+
+/* 图片上传 */
+.upload-tips {
+  font-size: 26rpx;
+  color: #999;
+  margin-bottom: 20rpx;
+}
+
+.image-uploader {
+  margin-top: 20rpx;
+}
+
+.image-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20rpx;
+}
+
+.image-item {
+  position: relative;
+  width: 180rpx;
+  height: 180rpx;
+  border-radius: 8rpx;
+  overflow: hidden;
+}
+
+.image-item image {
+  width: 100%;
+  height: 100%;
+}
+
+.image-delete {
+  position: absolute;
+  top: -10rpx;
+  right: -10rpx;
+  width: 40rpx;
+  height: 40rpx;
+  border-radius: 50%;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.image-add {
+  width: 180rpx;
+  height: 180rpx;
+  border: 1rpx dashed #ddd;
+  border-radius: 8rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #fafafa;
+}
+
+.add-text {
+  font-size: 24rpx;
+  color: #999;
+  margin-top: 10rpx;
+}
+
+/* 温馨提示 */
+.notice-section {
+  margin: 30rpx 0;
+  padding: 20rpx;
+  background-color: #fff;
+  border-radius: 10rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.05);
+}
+
+.notice-title {
+  font-size: 28rpx;
+  color: #666;
+  margin-bottom: 10rpx;
+  display: block;
+}
+
+.notice-list {
+  font-size: 26rpx;
+  color: #999;
+  line-height: 1.6;
+}
+
+.notice-item {
+  margin-bottom: 10rpx;
+}
+
+/* 提交按钮 */
+.submit-section {
+  margin-top: 40rpx;
+  padding-bottom: 60rpx;
+}
+
+.submit-section button {
+  font-size: 32rpx;
+  padding: 20rpx 0;
+  border-radius: 8rpx;
+}
+
+/* 适配不同屏幕尺寸 */
+@media screen and (min-width: 768px) {
+  .refund-container {
+    max-width: 768rpx;
+    margin: 0 auto;
+  }
+}

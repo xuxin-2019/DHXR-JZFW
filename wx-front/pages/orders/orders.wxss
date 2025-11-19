@@ -265,6 +265,24 @@
   background-color: #40a9ff;
 }
 
+/* 退款按钮样式 */
+.refund-btn {
+  height: 50rpx;
+  padding: 0 20rpx;
+  font-size: 22rpx;
+  color: #fff;
+  background-color: #ff4d4f;
+  border-radius: 25rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 10rpx;
+}
+
+.refund-btn:active {
+  background-color: #ff7875;
+}
+
 /* 刷新指示器 */
 .refresh-indicator {
   position: fixed;

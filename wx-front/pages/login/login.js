@@ -248,12 +248,13 @@ Page({
       method: 'POST',
       data: requestData,
       success: (res) => {
-
+        console.log('登录中！！');
         
         if (res.data.code === 200 || res.data.success) {
           // 登录成功，保存用户信息到本地存储
           wx.setStorageSync('userInfo', res.data.data?.userInfo || {});
           wx.setStorageSync('token', res.data.data?.token || '');
+          wx.setStorageSync('openid', res.data.data?.openid || '');
           // 存储用户角色标识到本地
           wx.setStorageSync('userRole', role);
           wx.setStorageSync('userId', res.data.data?.id || '');

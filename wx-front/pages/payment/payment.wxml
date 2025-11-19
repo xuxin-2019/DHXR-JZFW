@@ -1,0 +1,79 @@
+<!-- payment.wxml -->
+
+<view class="payment-container">
+  <!-- 支付状态 -->
+  <view class="status-section">
+    <view wx:if="{{paymentStatus === 0}}" class="status-info">
+      <icon type="waiting" size="80" color="#1aad19"/>
+      <text class="status-text">等待支付</text>
+    </view>
+    <view wx:elif="{{paymentStatus === 1}}" class="status-info">
+      <icon type="waiting" size="80" color="#1aad19"/>
+      <text class="status-text">支付处理中...</text>
+    </view>
+    <view wx:elif="{{paymentStatus === 2}}" class="status-info">
+      <icon type="success" size="80" color="#1aad19"/>
+      <text class="status-text">支付成功</text>
+    </view>
+    <view wx:elif="{{paymentStatus === 3}}" class="status-info">
+      <icon type="warn" size="80" color="#e64340"/>
+      <text class="status-text">支付失败</text>
+      <text class="error-message">{{errorMsg}}</text>
+    </view>
+  </view>
+
+  <!-- 订单信息 -->
+  <view class="order-section">
+    <view class="section-title">订单信息</view>
+    <view class="info-item">
+      <text class="label">服务类型：</text>
+      <text class="value">{{orderInfo.serviceTypeName || '-'}}</text>
+    </view>
+    <view class="info-item">
+      <text class="label">服务地址：</text>
+      <text class="value">{{orderInfo.serviceAddress || '-'}}</text>
+    </view>
+    <view class="info-item">
+      <text class="label">服务时间：</text>
+      <text class="value">{{orderInfo.serviceTime || '-'}}</text>
+    </view>
+    <view class="info-item">
+      <text class="label">服务时长：</text>
+      <text class="value">{{orderInfo.serviceDuration || '-'}} 小时</text>
+    </view>
+    <view class="info-item">
+      <text class="label">订单编号：</text>
+      <text class="value">{{orderInfo.orderNo || '-'}}</text>
+    </view>
+    <view class="info-item total-amount">
+      <text class="label">支付金额：</text>
+      <text class="value">¥{{orderInfo.totalAmount || '0.00'}}</text>
+    </view>
+  </view>
+
+  <!-- 倒计时 -->
+  <view wx:if="{{paymentStatus === 0 || paymentStatus === 1}}" class="countdown-section">
+    <text class="countdown-text">{{countdownText}}</text>
+  </view>
+
+  <!-- 操作按钮 -->
+  <view class="action-section">
+    <!-- 加载中 -->
+    <view wx:if="{{loading}}" class="loading-btn">
+      <loading size="24" color="#fff"></loading>
+      <text>处理中...</text>
+    </view>
+    
+    <!-- 支付失败 -->
+    <view wx:elif="{{paymentStatus === 3}}" class="btn-group">
+      <button type="primary" bindtap="onRetryPayment" size="mini">重新支付</button>
+      <button bindtap="onClosePayment" size="mini">关闭</button>
+    </view>
+    
+    <!-- 用户取消支付 -->
+    <view wx:elif="{{paymentStatus === 0}}" class="btn-group">
+      <button type="primary" bindtap="invokeWechatPayment">确认支付</button>
+      <button bindtap="onClosePayment">取消支付</button>
+    </view>
+  </view>
+</view>

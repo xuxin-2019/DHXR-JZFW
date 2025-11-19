@@ -8,7 +8,6 @@ CREATE TABLE IF NOT EXISTS `user` (
   `phone` varchar(20) NOT NULL COMMENT '手机号',
   `name` varchar(50) NOT NULL COMMENT '姓名',
   `address` varchar(255) DEFAULT NULL COMMENT '地址',
-  `password` varchar(255) NOT NULL COMMENT '密码',
   `avatar_url` varchar(255) DEFAULT NULL COMMENT '头像URL',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
@@ -23,7 +22,6 @@ CREATE TABLE IF NOT EXISTS `nurse` (
   `name` varchar(50) NOT NULL COMMENT '姓名',
   `age` int(3) DEFAULT NULL COMMENT '年龄',
   `service_type_id` bigint(20) NOT NULL COMMENT '服务类型ID',
-  `password` varchar(255) NOT NULL COMMENT '密码',
   `avatar_url` varchar(255) DEFAULT NULL COMMENT '头像URL',
   `status` tinyint(1) DEFAULT 1 COMMENT '状态(1:空闲, 2:忙碌, 3:离线)',
   `rating` decimal(3,2) DEFAULT 5.00 COMMENT '评分',
@@ -66,21 +64,23 @@ CREATE TABLE IF NOT EXISTS `order` (
   `nurse_id` bigint(20) DEFAULT NULL COMMENT '护工ID',
   `service_type_id` bigint(20) NOT NULL COMMENT '服务类型ID',
   `total_amount` decimal(10,2) NOT NULL COMMENT '总金额',
-  `status` tinyint(1) NOT NULL DEFAULT 1 COMMENT '订单状态(1:待派单, 2:已派单, 3:已接单, 4:服务中, 5:已完成, 6:已取消, 7:已拒绝)',
+  `status` int(2) NOT NULL DEFAULT 0 COMMENT '订单状态(0:待支付, 1:待派单, 2:已派单, 3:已接单, 4:服务中, 5:已完成, 6:已取消, 7:已拒绝)',
+  `payment_status` int(2) NOT NULL DEFAULT 0 COMMENT '支付状态(0未支付,1已支付,2支付失败,3退款中,4已退款)',
   `service_address` varchar(255) NOT NULL COMMENT '服务地址',
-  `service_time` varchar(50) DEFAULT NULL COMMENT '服务时间',
+  `service_time` varchar(50) NOT NULL COMMENT '服务时间',
   `payment_time` varchar(50) DEFAULT NULL COMMENT '支付时间',
+  `payment_order_id` varchar(100) DEFAULT NULL COMMENT '支付订单ID',
+  `refund_order_id` varchar(100) DEFAULT NULL COMMENT '退款订单ID',
+  `transaction_id` varchar(100) DEFAULT NULL COMMENT '微信交易号',
+  `expire_time` datetime DEFAULT NULL COMMENT '订单过期时间',
   `start_time` varchar(50) DEFAULT NULL COMMENT '服务开始时间',
   `end_time` varchar(50) DEFAULT NULL COMMENT '服务结束时间',
-  `service_duration` int DEFAULT NULL COMMENT '服务时长（单位：分钟）',
+  `service_duration` int(11) NOT NULL COMMENT '服务时长（单位：分钟）',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_order_no` (`order_no`)
 ) ENGINE=InnoDB AUTO_INCREMENT=50001 DEFAULT CHARSET=utf8mb4 COMMENT='订单表';
-
-ALTER TABLE `order` 
-ADD COLUMN `service_duration` INT DEFAULT NULL COMMENT '服务时长（单位：分钟）';
 
 -- 评价表
 CREATE TABLE IF NOT EXISTS `evaluation` (
@@ -134,3 +134,48 @@ ADD COLUMN `openid` varchar(100) DEFAULT NULL COMMENT '微信openid' AFTER `avat
 -- 为护工表的openid字段添加唯一索引
 ALTER TABLE `nurse` 
 ADD UNIQUE KEY `uk_openid` (`openid`);
+
+-- 支付记录表
+CREATE TABLE IF NOT EXISTS `payment_record` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '记录ID',
+  `order_id` bigint(20) NOT NULL COMMENT '订单ID',
+  `order_no` varchar(50) NOT NULL COMMENT '订单编号',
+  `user_id` bigint(20) NOT NULL COMMENT '用户ID',
+  `amount` decimal(10,2) NOT NULL COMMENT '支付金额',
+  `pay_type` int(2) NOT NULL COMMENT '支付方式：1-微信支付',
+  `out_trade_no` varchar(100) DEFAULT NULL COMMENT '微信支付商户订单号',
+  `transaction_id` varchar(100) DEFAULT NULL COMMENT '微信支付交易号',
+  `status` int(2) NOT NULL COMMENT '支付状态：1-待支付，2-支付中，3-支付成功，4-支付失败',
+  `pay_time` datetime DEFAULT NULL COMMENT '支付时间',
+  `callback_result` text DEFAULT NULL COMMENT '支付回调结果',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `remark` varchar(255) DEFAULT NULL COMMENT '备注',
+  PRIMARY KEY (`id`),
+  KEY `idx_order_id` (`order_id`),
+  KEY `idx_user_id` (`user_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=80001 DEFAULT CHARSET=utf8mb4 COMMENT='支付记录表';
+
+-- 退款申请表
+CREATE TABLE IF NOT EXISTS `refund_application` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '申请ID',
+  `order_id` bigint(20) NOT NULL COMMENT '订单ID',
+  `order_no` varchar(50) NOT NULL COMMENT '订单编号',
+  `user_id` bigint(20) NOT NULL COMMENT '用户ID',
+  `refund_amount` decimal(10,2) NOT NULL COMMENT '退款金额',
+  `refund_reason` varchar(500) NOT NULL COMMENT '退款原因',
+  `application_time` datetime NOT NULL COMMENT '申请时间',
+  `audit_status` int(2) NOT NULL DEFAULT 0 COMMENT '审核状态(0:待审核,1:审核通过,2:审核拒绝)',
+  `audit_time` datetime DEFAULT NULL COMMENT '审核时间',
+  `auditor_id` bigint(20) DEFAULT NULL COMMENT '审核人ID',
+  `audit_remark` varchar(500) DEFAULT NULL COMMENT '审核备注',
+  `refund_status` int(2) NOT NULL DEFAULT 0 COMMENT '退款状态(0:未退款,1:退款中,2:退款成功,3:退款失败)',
+  `refund_time` datetime DEFAULT NULL COMMENT '退款时间',
+  `refund_order_id` varchar(100) DEFAULT NULL COMMENT '退款订单ID',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`id`),
+  KEY `idx_order_id` (`order_id`),
+  KEY `idx_user_id` (`user_id`),
+  KEY `idx_auditor_id` (`auditor_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=90001 DEFAULT CHARSET=utf8mb4 COMMENT='退款申请表';

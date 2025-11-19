@@ -247,6 +247,7 @@ public class WxLoginServiceImpl implements WxLoginService {
             Map<String, Object> result = new HashMap<>();
             result.put("token", token);
             result.put("id", userId);
+            result.put("openId", openid);
             result.put("userInfo", userObj);
             result.put("role", role);
             

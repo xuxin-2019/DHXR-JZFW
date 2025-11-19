@@ -49,6 +49,13 @@ wechat:
   mini:
     appid: wx2c30d8dbc07248f2
     secret: 4a0e4fa4032dc4b5d7ec9ce04fc611f7
+  # 微信支付配置
+  pay:
+    appid: wx2c30d8dbc07248f2
+    mchid: 1234567890
+    key: your_api_key_here
+    notify_url: http://your-domain.com/homemaker/api/pay/notify
+    refund_notify_url: http://your-domain.com/homemaker/api/pay/refund-notify
 
 # 登录拦截器配置
 login:

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.homemaker.mapper.RefundMapper">
+
+    <!-- 基础字段映射 -->
+    <sql id="Base_Column_List">
+        id, order_id, payment_id, refund_no, transaction_id, out_refund_no, 
+        refund_amount, total_amount, reason, status, admin_id, remark, 
+        create_time, update_time
+    </sql>
+
+    <!-- 根据订单ID查询退款记录 -->
+    <select id="selectByOrderId" resultType="com.homemaker.entity.Refund">
+        select 
+            <include refid="Base_Column_List" />
+        from t_refund
+        where order_id = #{orderId}
+        order by create_time desc
+        limit 1
+    </select>
+
+    <!-- 根据退款单号查询退款记录 -->
+    <select id="selectByRefundNo" resultType="com.homemaker.entity.Refund">
+        select 
+            <include refid="Base_Column_List" />
+        from t_refund
+        where refund_no = #{refundNo}
+    </select>
+
+    <!-- 根据商户退款单号查询退款记录 -->
+    <select id="selectByOutRefundNo" resultType="com.homemaker.entity.Refund">
+        select 
+            <include refid="Base_Column_List" />
+        from t_refund
+        where out_refund_no = #{outRefundNo}
+    </select>
+
+</mapper>

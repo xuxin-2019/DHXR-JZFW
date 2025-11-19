@@ -1,5 +1,7 @@
 // index.js
 
+import {API} from "../../utils/api";
+
 /**
  * 家政服务小程序首页
  * 展示服务类型、服务内容、用户评价及底部菜单
@@ -161,7 +163,7 @@ Page({
       
       // 发送请求到登录接口
       wx.request({
-        url: 'http://127.0.0.1:8080/homemaker/api/wx/login',
+        url: API.wx.login,
         method: 'POST',
         data: requestData,
         header: {
@@ -173,6 +175,7 @@ Page({
             wx.setStorageSync('token', res.data.data.token);
             wx.setStorageSync('userInfo', res.data.data.userInfo || {});
             wx.setStorageSync('userId', res.data.data.id || '');
+            wx.setStorageSync('openid', res.data.data?.openId || '');
             // 将角色转换为字符串类型保存，确保与前端条件判断一致
             wx.setStorageSync('userRole', (res.data.data.role || '').toString());
             

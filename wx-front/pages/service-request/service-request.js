@@ -208,7 +208,7 @@ Page({
   },
 
   /**
-   * 提交服务申请
+   * 提交服务申请并处理支付
    */
   submitRequest: function() {
     // 表单验证
@@ -255,34 +255,124 @@ Page({
       console.log('创建订单成功:', res);
       
       if (res.code === 200 || res.success) {
-        // 订单创建成功
-        wx.showToast({
-          title: '订单创建成功',
-          icon: 'success'
-        });
+        const orderId = res.data.id || res.data.orderId;
         
-        // 延迟跳转到首页
-        setTimeout(() => {
-          wx.redirectTo({
-            url: '../index/index'
-          });
-        }, 1500);
+        if (!orderId) {
+          throw new Error('订单ID获取失败');
+        }
+        
+        console.log('订单ID:', orderId);
+        // 保存订单ID到页面数据
+        this.setData({ orderId });
+        // 获取openid
+        const openid = wx.getStorageSync('openid');
+        if (!openid) {
+          throw new Error('用户openid不存在');
+        }
+        
+        // 调用支付接口获取支付参数
+        return this.getPaymentParams(orderId, openid, token);
+      } else {
+        throw new Error(res.message || '创建订单失败');
+      }
+    }).then(payParams => {
+      // 调用微信支付接口
+      return this.requestPayment(payParams);
+    }).then(() => {
+      // 支付成功
+      console.log('支付成功');
+      this.redirectToPaymentResult('success');
+    }).catch(err => {
+      console.error('处理失败:', err);
+      
+      // 判断是否是用户取消支付
+      if (err.errMsg && err.errMsg.includes('cancel')) {
+        wx.showToast({
+          title: '已取消支付',
+          icon: 'none'
+        });
       } else {
         wx.showToast({
-          title: res.message || '创建订单失败',
+          title: err.message || '操作失败，请稍后重试',
           icon: 'none'
         });
       }
-    }).catch(err => {
-        console.error('创建订单失败:', err);
-        wx.showToast({
-          title: '网络异常，请稍后重试',
-          icon: 'none'
-        });
+      
+      // 无论支付成功还是失败，都跳转到支付结果页
+      this.redirectToPaymentResult('fail');
     }).finally(() => {
       this.setData({
         loading: false
       });
     });
+  },
+  
+  /**
+   * 获取支付参数
+   * @param {string|number} orderId 订单ID
+   * @param {string} openid 用户openid
+   * @param {string} token 用户token
+   * @returns {Promise<Object>} 支付参数
+   */
+  getPaymentParams: function(orderId, openid, token) {
+    return new Promise((resolve, reject) => {
+      request(`${API.payment.create}/${orderId}`, {
+        method: 'POST',
+        data: {
+          openid: openid
+        },
+        header: {
+          'Authorization': `Bearer ${token}`
+        }
+      }).then(res => {
+        console.log('获取支付参数成功:', res);
+        
+        if (res.code === 200 || res.success) {
+          if (res.data && res.data.payParams) {
+            resolve(res.data.payParams);
+          } else {
+            reject(new Error('支付参数格式错误'));
+          }
+        } else {
+          reject(new Error(res.message || '获取支付参数失败'));
+        }
+      }).catch(err => {
+        console.error('获取支付参数失败:', err);
+        reject(new Error('网络异常，请稍后重试'));
+      });
+    });
+  },
+  
+  /**
+   * 调用微信支付接口
+   * @param {Object} payParams 支付参数
+   * @returns {Promise}
+   */
+  requestPayment: function(payParams) {
+    return new Promise((resolve, reject) => {
+      // 调用微信支付接口
+      wx.requestPayment({
+        ...payParams,
+        success: function(res) {
+          resolve(res);
+        },
+        fail: function(err) {
+          reject(err);
+        }
+      });
+    });
+  },
+  
+  /**
+   * 跳转到支付结果页面
+   * @param {string} status 支付状态: success | fail
+   */
+  redirectToPaymentResult: function(status) {
+    const orderId = this.data.orderId || '';
+    setTimeout(() => {
+      wx.redirectTo({
+        url: `/pages/payment-result/payment-result?status=${status}&orderId=${orderId}`
+      });
+    }, 1000);
   }
 });

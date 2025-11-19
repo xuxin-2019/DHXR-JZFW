@@ -35,12 +35,8 @@ public class OrderController extends BaseController {
     @PostMapping("/create")
     @Operation(summary = "创建订单", description = "创建新的订单，支持传入serviceDuration（服务时长，单位：分钟）")
     public Result createOrder(@RequestBody Order order) {
-        boolean result = orderService.createOrder(order);
-        if (result) {
-            return Result.success("创建成功");
-        } else {
-            return Result.error("创建失败");
-        }
+        Order result = orderService.createOrder(order);
+        return Result.success("创建成功",result);
     }
 
     /**

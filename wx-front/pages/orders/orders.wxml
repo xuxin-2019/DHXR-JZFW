@@ -78,9 +78,10 @@
         <view class="action-buttons">
           <view class="contact-btn" data-phone="13311090981" bindtap="contactCaregiver">联系客服</view>
         </view>
-        <!-- 已完成状态下显示去评价按钮 -->
+        <!-- 已完成状态下显示去评价和申请退款按钮 -->
         <view wx:if="{{item.status === 5 || (item.statusInfo && item.statusInfo.code === 5)}}" class="action-buttons">
           <view class="review-btn" data-id="{{item.orderNo}}" data-nurseid="{{item.nurseId}}" bindtap="onReviewButtonTap">去评价</view>
+          <view class="refund-btn" data-id="{{item.orderNo}}" bindtap="onRefundButtonTap">申请退款</view>
         </view>
       </view>
     </view>

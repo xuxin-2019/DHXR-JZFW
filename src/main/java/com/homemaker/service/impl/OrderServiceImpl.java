@@ -26,20 +26,22 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     private OrderMapper orderMapper;
     
     @Override
-    public boolean createOrder(Order order) {
+    public Order createOrder(Order order) {
         // 生成订单编号
         String orderNo = generateOrderNo();
         order.setOrderNo(orderNo);
         
-        // 设置默认状态为待派单
-        order.setStatus(1);
+        // 设置默认状态为待支付订单
+        order.setStatus(0);
         
         // 设置创建时间
         order.setCreateTime(new Date());
         order.setUpdateTime(new Date());
         
         // 保存订单
-        return save(order);
+        save(order);
+
+        return order;
     }
     
     @Override

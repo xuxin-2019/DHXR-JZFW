@@ -1,0 +1,86 @@
+<view class="refund-container">
+  <view wx:if="{{loading}}" class="loading-container">
+    <loading size="28" color="#1aad19"></loading>
+    <text class="loading-text">加载中...</text>
+  </view>
+
+  <view wx:else>
+    <view class="order-section">
+      <view class="section-title">订单信息</view>
+      <view class="info-item">
+        <text class="label">订单编号：</text>
+        <text class="value">{{orderInfo.orderNo}}</text>
+      </view>
+      <view class="info-item">
+        <text class="label">服务类型：</text>
+        <text class="value">{{orderInfo.serviceTypeName}}</text>
+      </view>
+      <view class="info-item">
+        <text class="label">服务时间：</text>
+        <text class="value">{{orderInfo.serviceTime}}</text>
+      </view>
+      <view class="info-item">
+        <text class="label">服务地址：</text>
+        <text class="value">{{orderInfo.serviceAddress}}</text>
+      </view>
+      <view class="info-item total-amount">
+        <text class="label">支付金额：</text>
+        <text class="value">¥{{orderInfo.totalAmount}}</text>
+      </view>
+      <view class="info-item">
+        <text class="label">申请退款金额：</text>
+        <text class="value refund-amount">¥{{refundAmount}}</text>
+      </view>
+    </view>
+
+    <view class="form-section">
+      <view class="section-title">退款原因</view>
+      <view class="reason-type">
+        <radio-group bindchange="onReasonTypeChange">
+          <view wx:for="{{reasonOptions}}" wx:key="value" class="reason-option">
+            <radio value="{{item.value}}" checked="{{refundReasonType === item.value}}"></radio>
+            <text class="reason-label">{{item.label}}</text>
+          </view>
+        </radio-group>
+      </view>
+
+      <view class="reason-detail">
+        <textarea 
+          placeholder="请详细描述退款原因"
+          value="{{refundReasonDetail}}"
+          bindinput="onReasonDetailInput"
+          maxlength="200"
+          auto-height
+          show-confirm-bar="false"
+        />
+        <view class="textarea-footer">
+          <text class="word-count">{{refundReasonDetail.length}}/200</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="form-section">
+      <view class="section-title">上传凭证（选填）</view>
+      <view class="upload-tips">最多上传5张图片
+      </view>
+      <view class="image-uploader">
+        <view class="image-list">
+          <view wx:for="{{images}}" wx:key="id" class="image-item">
+            <image src="{{item.url}}" bindtap="previewImage" data-index="{{index}}"></image>
+            <view class="image-delete" bindtap="deleteImage" data-index="{{index}}">
+              <icon type="clear" size="20" color="#fff"/>
+            </view>
+          </view>
+          <view wx:if="{{images.length < 5}}" class="image-add" bindtap="uploadImage">
+            <icon type="add" size="40" color="#ccc"/>
+            <text class="add-text">添加图片</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="submit-section">
+      <button type="primary" bindtap="submitRefund">提交退款申请</button>
+    </view>
+  </view>
+</view>

@@ -19,7 +19,7 @@ public interface OrderService extends IService<Order> {
      * @param order 订单信息
      * @return 是否创建成功
      */
-    boolean createOrder(Order order);
+    Order createOrder(Order order);
     
     /**
      * 查询用户的订单列表

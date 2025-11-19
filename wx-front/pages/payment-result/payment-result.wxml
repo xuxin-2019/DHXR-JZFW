@@ -1,0 +1,23 @@
+<view>
+  <view wx:if="{{status === 'success'}}">
+    <view>
+      <text>支付成功</text>
+    </view>
+    <view>
+      <text>订单编号：{{orderNo}}</text>
+    </view>
+    <view>
+      <button bindtap="viewOrderDetail">查看订单详情</button>
+      <button bindtap="goToHome">返回首页</button>
+    </view>
+  </view>
+  <view wx:else>
+    <view>
+      <text>支付失败</text>
+    </view>
+    <view>
+      <button bindtap="retryPayment">重新支付</button>
+      <button bindtap="goToHome">返回首页</button>
+    </view>
+  </view>
+</view>

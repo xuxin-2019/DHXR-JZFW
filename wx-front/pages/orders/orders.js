@@ -252,6 +252,17 @@ Page({
   },
   
   /**
+   * 退款按钮点击事件
+   */
+  onRefundButtonTap: function(e) {
+    const orderId = e.currentTarget.dataset.id;
+    
+    wx.navigateTo({
+      url: `/pages/refund-apply/refund-apply?orderId=${orderId}`
+    });
+  },
+  
+  /**
    * 关闭评价弹窗
    */
   closeReviewModal: function() {
