@@ -3,6 +3,7 @@ package com.homemaker.controller;
 import com.homemaker.service.PaymentService;
 import com.homemaker.service.RefundService;
 import com.homemaker.util.WechatPayUtil;
+import com.alibaba.fastjson.JSON;
 import java.io.BufferedReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -74,7 +75,7 @@ public class WechatPayCallbackController {
             }
 
             // 6. 处理支付通知
-            boolean result = paymentService.handlePayNotify(params);
+            boolean result = paymentService.handlePayNotify(JSON.toJSONString(params));
             if (!result) {
                 System.out.println("微信支付回调处理失败");
                 return generateFailXml("处理失败");
@@ -124,7 +125,7 @@ public class WechatPayCallbackController {
             }
 
             // 5. 处理退款通知
-            boolean result = refundService.handleRefundNotify(params);
+            boolean result = refundService.handleRefundNotify(JSON.toJSONString(params));
             if (!result) {
                 System.out.println("微信退款回调处理失败");
                 return generateFailXml("处理失败");

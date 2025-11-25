@@ -61,6 +61,11 @@ public class OrderVO {
     private Integer status;
 
     /**
+     * 支付状态(1:待支付, 2:支付中, 3:支付成功, 4:支付失败)
+     */
+    private Integer paymentStatus;
+
+    /**
      * 服务地址
      */
     private String serviceAddress;

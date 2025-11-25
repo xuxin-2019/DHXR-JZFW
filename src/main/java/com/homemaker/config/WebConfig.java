@@ -33,6 +33,10 @@ public class WebConfig implements WebMvcConfigurer {
                         "/api/wx/validate",
                         // 测试接口
                         "/api/test/**",
+                        // 支付相关接口
+                        "/homemaker/api/pay/notify",
+                        "/homemaker/api/pay/refund-notify",
+                        "/homemaker/api/payment/status",
                         // 静态资源
                         "/static/**",
                         // Swagger文档相关

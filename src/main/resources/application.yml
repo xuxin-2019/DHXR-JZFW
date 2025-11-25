@@ -51,11 +51,20 @@ wechat:
     secret: 4a0e4fa4032dc4b5d7ec9ce04fc611f7
   # 微信支付配置
   pay:
+    # 环境切换开关：true-生产环境（调用真实微信支付接口），false-测试环境（使用模拟数据）
+    isProduction: false
+    # 微信支付必要参数
     appid: wx2c30d8dbc07248f2
-    mchid: 1234567890
-    key: your_api_key_here
-    notify_url: http://your-domain.com/homemaker/api/pay/notify
-    refund_notify_url: http://your-domain.com/homemaker/api/pay/refund-notify
+    mchid: 1731663987
+    key: hIE8MbnofrivqcdAXGZ4Sk3JRw2YlupF
+    # API证书相关配置（生产环境必需）
+    cert_path: /opt/wechat/cert/apiclient_cert.p12
+    cert_password: 721124
+    # 回调通知地址
+    notify_url: https://3mqaze.top/homemaker/api/pay/notify
+    refund_notify_url: https://3mqaze.top/homemaker/api/pay/refund-notify
+    # APIv3配置（可选）
+    api_v3_key: your_api_v3_key_here
 
 # 登录拦截器配置
 login:
@@ -68,12 +77,15 @@ login:
       - ""
       - "/homemaker/index.html"
       - "/homemaker/api/service-type/list"
-    # 登录相关接口
+    # 登录相关接口和支付相关接口
     login-paths:
       - "/api/wx/login"
       - "/api/admin/login"
       - "/api/wx/validate"
       - "/api/test/"
+      - "/homemaker/api/pay/notify"
+      - "/homemaker/api/pay/refund-notify"
+      - "/homemaker/api/payment/status"
     # 静态资源路径前缀
     static-prefixes:
       - "/static/"

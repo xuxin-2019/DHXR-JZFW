@@ -2,8 +2,8 @@
 // 统一管理后端API路由
 
 // 后端服务基础地址
-const BASE_URL = 'http://127.0.0.1:8080/homemaker/api';
-// const BASE_URL = 'http://120.53.84.167/homemaker/api';
+// const BASE_URL = 'http://127.0.0.1:8080/homemaker/api';
+const BASE_URL = 'https://3mqaze.top/homemaker/api';
 
 // API路由配置
 export const API = {
@@ -61,7 +61,11 @@ export const API = {
     // 查询支付状态
     status: `${BASE_URL}/payment/status`,
     // 关闭支付订单
-    close: `${BASE_URL}/payment/close`
+    close: `${BASE_URL}/payment/close`,
+    // 获取支付结果信息
+    result: `${BASE_URL}/payment/result`,
+    // 更新支付状态
+    updateStatus: `${BASE_URL}/payment/updateStatus`
   },
   // 退款相关接口
   refund: {

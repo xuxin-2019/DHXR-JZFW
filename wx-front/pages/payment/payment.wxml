@@ -66,14 +66,12 @@
     
     <!-- 支付失败 -->
     <view wx:elif="{{paymentStatus === 3}}" class="btn-group">
-      <button type="primary" bindtap="onRetryPayment" size="mini">重新支付</button>
-      <button bindtap="onClosePayment" size="mini">关闭</button>
+      <button type="primary" bindtap="onRetryPayment">重新支付</button>
     </view>
     
     <!-- 用户取消支付 -->
     <view wx:elif="{{paymentStatus === 0}}" class="btn-group">
       <button type="primary" bindtap="invokeWechatPayment">确认支付</button>
-      <button bindtap="onClosePayment">取消支付</button>
     </view>
   </view>
 </view>

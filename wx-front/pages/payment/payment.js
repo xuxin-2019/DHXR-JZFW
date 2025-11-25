@@ -33,13 +33,46 @@ Page({
   onLoad: function(options) {
     // 获取页面参数
     const orderData = JSON.parse(options.orderData || '{}');
-    this.setData({ orderInfo: orderData });
+    // 如果从支付结果页面跳转过来，直接使用传入的orderId和orderNo
+    const orderId = options.orderId || orderData.orderId;
+    const orderNo = options.orderNo || orderData.orderNo;
     
-    // 立即创建支付订单
-    this.createPaymentOrder();
+    this.setData({
+      orderInfo: {
+        ...orderData,
+        orderId: orderId,
+        orderNo: orderNo
+      },
+      // 初始状态设为未支付，等待查询实际状态
+      paymentStatus: 0
+    });
     
-    // 开始倒计时
-    this.startCountdown();
+    // 如果有orderId，先查询订单支付状态，不再立即创建支付订单
+    if (orderId) {
+      this.queryOrderStatus();
+    } else {
+      // 如果没有orderId，则创建新的支付订单
+      this.createPaymentOrder();
+      this.startCountdown();
+    }
+  },
+  
+  /**
+   * 查询订单支付状态
+   */
+  queryOrderStatus: function() {
+    const { orderInfo } = this.data;
+    
+    this.setData({ loading: true });
+    
+    // 模拟查询订单状态的接口调用
+    // 实际项目中应该调用真实的查询接口
+    setTimeout(() => {
+      this.setData({ loading: false });
+      // 默认显示为支付失败，这样可以显示重新支付按钮
+      // 实际项目中应该根据真实接口返回的状态设置
+      this.setData({ paymentStatus: 3, errorMsg: '支付失败' });
+    }, 500);
   },
 
   /**
@@ -160,26 +193,43 @@ Page({
   onRetryPayment: function() {
     this.createPaymentOrder();
   },
-
+  
   /**
-   * 关闭支付
+   * 关闭支付订单
+   * 仅在倒计时结束时调用
    */
   onClosePayment: function() {
     const { orderInfo } = this.data;
     
-    if (!orderInfo.orderId) {
-      wx.navigateBack();
+    if (!orderInfo || !orderInfo.orderId) {
+      this.setData({
+        errorMsg: '支付已超时，请重新下单'
+      });
       return;
     }
     
-    // 调用关闭支付接口
-    request(`${API.payment.close}/${orderInfo.orderId}`, {
-      method: 'POST'
-    }).then(() => {
-      wx.navigateBack();
-    }).catch(() => {
-      // 即使关闭接口失败也返回上一页
-      wx.navigateBack();
+    // 调用关闭订单接口
+    request(API.payment.close, {
+      method: 'POST',
+      data: {
+        orderId: orderInfo.orderId
+      }
+    }).then(res => {
+      if (res.code === 200) {
+        this.setData({
+          errorMsg: '支付已超时，订单已关闭'
+        });
+      } else {
+        console.error('关闭订单失败:', res.message);
+        this.setData({
+          errorMsg: '支付已超时，请重新下单'
+        });
+      }
+    }).catch(err => {
+      console.error('关闭订单网络异常:', err);
+      this.setData({
+        errorMsg: '支付已超时，请重新下单'
+      });
     });
   },
 
@@ -196,8 +246,11 @@ Page({
         this.setData({
           countdownText: '支付已超时',
           paymentStatus: 3,
-          errorMsg: '支付已超时，请重新下单'
+          errorMsg: '支付已超时，正在关闭订单...'
         });
+        
+        // 倒计时结束时调用关闭支付接口
+        this.onClosePayment();
         return;
       }
       

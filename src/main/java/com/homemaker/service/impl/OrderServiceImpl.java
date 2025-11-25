@@ -85,20 +85,6 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         order.setStatus(status);
         order.setUpdateTime(new Date());
         
-        // 创建日期格式化对象
-        // SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        
-        // 根据状态更新相应的时间
-        // if (status == 2) { // 已派单
-        //     order.setServiceTime(dateFormat.format(new Date()));
-        // } else if (status == 3) { // 已接单
-        //     order.setStartTime(dateFormat.format(new Date()));
-        // } else if (status == 5) { // 已完成
-        //     order.setEndTime(dateFormat.format(new Date()));
-        // } else if (status == 7) { // 已拒绝
-        //     order.setEndTime(dateFormat.format(new Date()));
-        // }
-        
         return updateById(order);
     }
     
@@ -200,5 +186,15 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         }
         
         return false; // 没有时间重叠的订单
+    }
+    
+    @Override
+    public List<Order> findPendingPaymentOrders() {
+        // 查询所有待支付状态的订单（状态为0）
+        return orderMapper.selectList(
+                new com.baomidou.mybatisplus.core.conditions.query.QueryWrapper<Order>()
+                        .eq("status", 0) // 0:待支付
+                        .orderByAsc("create_time") // 按创建时间升序排列，优先处理更早的订单
+        );
     }
 }

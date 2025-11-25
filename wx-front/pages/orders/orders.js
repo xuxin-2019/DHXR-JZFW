@@ -23,6 +23,7 @@ Page({
     // tab栏数据
     tabs: [
       { id: 'all', name: '全部', statusList: [] },
+      { id: 'unpaid', name: '待支付', statusList: [0] },
       { id: 'pending', name: '派单中', statusList: [1, 2] },
       { id: 'accepted', name: '已接单', statusList: [3] },
       { id: 'completed', name: '已完成', statusList: [5] }
@@ -174,6 +175,7 @@ Page({
   formatOrderData: function(orders) {
     // 订单状态映射
     const statusMap = {
+      0: { text: '待支付', color: '#ff9800' },
       1: { text: '待派单', color: '#ff9800' },
       2: { text: '匹配中', color: '#2196f3' },
       3: { text: '已接单', color: '#4caf50' },
@@ -181,6 +183,14 @@ Page({
       5: { text: '已完成', color: '#8bc34a' },
       6: { text: '已取消', color: '#9e9e9e' },
       7: { text: '已拒绝', color: '#e91e63' }
+    };
+    
+    // 支付状态映射
+    const paymentStatusMap = {
+      1: { text: '待支付', color: '#ff9800' },
+      2: { text: '支付中', color: '#2196f3' },
+      3: { text: '支付成功', color: '#4caf50' },
+      4: { text: '支付失败', color: '#ff5252' }
     };
     
     // 过滤掉已取消和已拒绝的订单
@@ -197,6 +207,9 @@ Page({
         serviceTimeFormatted = this.formatDateTime(order.startTime);
       }
       
+      // 获取支付状态信息，如果没有支付状态，默认为待支付(1)
+      const paymentStatus = order.paymentStatus !== undefined ? order.paymentStatus : 1;
+      
       return {
         ...order,
         // 映射服务类型和金额字段，确保与WXML模板匹配
@@ -207,7 +220,11 @@ Page({
         // 服务时长（单位：分钟）
         serviceDurationFormatted: order.serviceDuration ? `${order.serviceDuration}分钟` : '',
         // 获取状态文本和颜色
-        statusInfo: statusMap[order.status] || { text: '未知状态', color: '#9e9e9e' }
+        statusInfo: statusMap[order.status] || { text: '未知状态', color: '#9e9e9e' },
+        // 获取支付状态文本和颜色
+        paymentStatusInfo: paymentStatusMap[paymentStatus] || { text: '待支付', color: '#ff9800' },
+        // 支付状态
+        paymentStatus: paymentStatus
       };
     });
   },
@@ -452,6 +469,22 @@ Page({
         });
       }
     });
+  },
+  
+  /**
+   * 处理支付状态按钮点击事件
+   * 如果支付状态不是支付成功(3)，则跳转到支付结果页
+   */
+  onPaymentStatusTap: function(e) {
+    const orderId = e.currentTarget.dataset.orderid;
+    const paymentStatus = e.currentTarget.dataset.paymentstatus;
+    
+    // 如果支付状态不是支付成功，则跳转到支付结果页
+    if (paymentStatus !== 3) {
+      wx.navigateTo({
+        url: `/pages/payment-result/payment-result?orderId=${orderId}`
+      });
+    }
   },
   
   /**

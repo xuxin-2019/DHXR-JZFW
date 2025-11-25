@@ -65,7 +65,6 @@ CREATE TABLE IF NOT EXISTS `order` (
   `service_type_id` bigint(20) NOT NULL COMMENT '服务类型ID',
   `total_amount` decimal(10,2) NOT NULL COMMENT '总金额',
   `status` int(2) NOT NULL DEFAULT 0 COMMENT '订单状态(0:待支付, 1:待派单, 2:已派单, 3:已接单, 4:服务中, 5:已完成, 6:已取消, 7:已拒绝)',
-  `payment_status` int(2) NOT NULL DEFAULT 0 COMMENT '支付状态(0未支付,1已支付,2支付失败,3退款中,4已退款)',
   `service_address` varchar(255) NOT NULL COMMENT '服务地址',
   `service_time` varchar(50) NOT NULL COMMENT '服务时间',
   `payment_time` varchar(50) DEFAULT NULL COMMENT '支付时间',

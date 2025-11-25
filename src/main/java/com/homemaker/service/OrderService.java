@@ -88,4 +88,10 @@ public interface OrderService extends IService<Order> {
      * @return 如果有已接单状态的订单则返回true，否则返回false
      */
     boolean hasNurseAcceptedOrderInTimeRange(Long nurseId, String startTime, String endTime);
+    
+    /**
+     * 查询所有待支付的订单
+     * @return 待支付订单列表
+     */
+    List<Order> findPendingPaymentOrders();
 }

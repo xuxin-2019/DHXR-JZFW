@@ -178,6 +178,37 @@
   font-size: 32rpx;
 }
 
+/* 支付状态按钮样式 */
+.payment-status-btn {
+  height: 50rpx;
+  padding: 0 20rpx;
+  font-size: 22rpx;
+  color: #fff;
+  border-radius: 25rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  touch-action: manipulation;
+  cursor: pointer;
+}
+
+.payment-status-btn:active {
+  opacity: 0.8;
+  transform: scale(0.98);
+}
+
+/* 支付成功状态下的禁用样式 */
+.payment-status-btn.disabled {
+  cursor: not-allowed;
+  opacity: 0.8;
+}
+
+.payment-status-btn.disabled:active {
+  opacity: 0.8;
+  transform: none;
+}
+
 /* 订单时间信息 */
 .order-time {
   margin-bottom: 20rpx;

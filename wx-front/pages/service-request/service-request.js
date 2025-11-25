@@ -208,7 +208,7 @@ Page({
   },
 
   /**
-   * 提交服务申请并处理支付
+   * 提交服务申请
    */
   submitRequest: function() {
     // 表单验证
@@ -225,6 +225,9 @@ Page({
         title: '请先登录',
         icon: 'none'
       });
+      this.setData({
+        loading: false
+      });
       return;
     }
     
@@ -239,7 +242,7 @@ Page({
       totalAmount: parseFloat(expectedPrice),
       serviceAddress: serviceAddress,
       serviceTime: expectedTime + ':00', // 期望服务时间，后台需要秒，添加:00
-      serviceDuration: parseInt(expectedDuration) // 服务时长（单位：分钟）
+      serviceDuration:  parseInt(expectedDuration) // 服务时长（单位：分钟）
     };
     
     console.log('提交的订单数据:', requestData);
@@ -277,38 +280,56 @@ Page({
       }
     }).then(payParams => {
       // 调用微信支付接口
-      return this.requestPayment(payParams);
+      return this.requestPayment(payParams, token);
     }).then(() => {
-      // 支付成功
+      // 支付成功 - 场景4
       console.log('支付成功');
+      // 跳转到支付结果页
       this.redirectToPaymentResult('success');
     }).catch(err => {
       console.error('处理失败:', err);
       
       // 判断是否是用户取消支付
       if (err.errMsg && err.errMsg.includes('cancel')) {
-        wx.showToast({
-          title: '已取消支付',
-          icon: 'none'
+        // 场景2: 用户取消支付，会在requestPayment方法中处理
+        console.log('用户已取消支付');
+      } else if (err.message && (err.message.includes('支付参数') || err.message.includes('网络异常'))) {
+        // 场景1: 获取支付参数失败，保持在当前页面
+        console.log('获取支付参数失败');
+        wx.showModal({
+          title: '提示',
+          content: err.message || '获取支付参数失败，请重试',
+          showCancel: false,
+          success: function(res) {
+            if (res.confirm) {
+              // 用户确认后，可以重新尝试获取支付参数
+              this.setData({ loading: false });
+            }
+          }.bind(this)
         });
+        return; // 不继续执行后续跳转逻辑
       } else {
+        // 其他错误情况
         wx.showToast({
           title: err.message || '操作失败，请稍后重试',
           icon: 'none'
         });
       }
       
-      // 无论支付成功还是失败，都跳转到支付结果页
-      this.redirectToPaymentResult('fail');
+      // 支付失败或用户取消支付的情况，会在requestPayment中处理跳转
     }).finally(() => {
-      this.setData({
-        loading: false
-      });
+      // 确保在finally中只处理loading状态，跳转逻辑由具体方法控制
+      if (!this.data.skipFinally) {
+        this.setData({
+          loading: false
+        });
+      }
     });
   },
   
   /**
    * 获取支付参数
+   * 场景1: 获取支付参数失败 - 保持在当前页面不变
    * @param {string|number} orderId 订单ID
    * @param {string} openid 用户openid
    * @param {string} token 用户token
@@ -345,10 +366,14 @@ Page({
   
   /**
    * 调用微信支付接口
+   * 场景2: 支付接口取消支付
+   * 场景3: 支付接口其他失败
+   * 场景4: 支付成功
    * @param {Object} payParams 支付参数
+   * @param {string} token 用户token
    * @returns {Promise}
    */
-  requestPayment: function(payParams) {
+  requestPayment: function(payParams, token) {
     return new Promise((resolve, reject) => {
       // 调用微信支付接口
       wx.requestPayment({
@@ -357,21 +382,77 @@ Page({
           resolve(res);
         },
         fail: function(err) {
+          const orderId = this.data.orderId;
+          console.log('支付失败:', err);
+          
+          // 设置不执行finally中的loading状态修改
+          this.setData({ skipFinally: true });
+          
+          // 判断是用户取消支付还是其他失败
+          if (err.errMsg && err.errMsg.includes('cancel')) {
+            // 场景2: 用户取消支付
+            console.log('用户取消支付');
+            
+            // 调用后台接口修改支付表状态为：支付中（2）
+            request(API.payment.updateStatus, {
+              method: 'POST',
+              data: {
+                orderId: orderId,
+                status: 2 // 支付中
+              },
+              header: {
+                'Authorization': `Bearer ${token}`
+              }
+            }).then(res => {
+              console.log('更新支付状态为支付中成功:', res);
+              // 跳转支付结果页
+              this.redirectToPaymentResult('processing');
+            }).catch(error => {
+              console.error('更新支付状态失败:', error);
+              // 即使更新状态失败，也跳转到支付结果页
+              this.redirectToPaymentResult('processing');
+            });
+          } else {
+            // 场景3: 支付接口其他失败
+            console.log('支付接口其他失败');
+            
+            // 支付表状态改为：支付失败（4）
+            request(API.payment.updateStatus, {
+              method: 'POST',
+              data: {
+                orderId: orderId,
+                status: 4 // 支付失败
+              },
+              header: {
+                'Authorization': `Bearer ${token}`
+              }
+            }).then(res => {
+              console.log('更新支付状态为支付失败成功:', res);
+              // 跳转支付结果页
+              this.redirectToPaymentResult('fail');
+            }).catch(error => {
+              console.error('更新支付状态失败:', error);
+              // 即使更新状态失败，也跳转到支付结果页
+              this.redirectToPaymentResult('fail');
+            });
+          }
+          
           reject(err);
-        }
+        }.bind(this)
       });
     });
   },
   
   /**
    * 跳转到支付结果页面
-   * @param {string} status 支付状态: success | fail
+   * @param {string} status 支付状态: success | fail | processing
    */
   redirectToPaymentResult: function(status) {
     const orderId = this.data.orderId || '';
     setTimeout(() => {
+      // 只传递orderId参数，让支付结果页自行查询支付状态
       wx.redirectTo({
-        url: `/pages/payment-result/payment-result?status=${status}&orderId=${orderId}`
+        url: `/pages/payment-result/payment-result?orderId=${orderId}`
       });
     }, 1000);
   }

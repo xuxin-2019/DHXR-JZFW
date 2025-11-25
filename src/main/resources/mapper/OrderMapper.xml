@@ -13,6 +13,7 @@
         <result column="service_type_name" property="serviceTypeName"/>
         <result column="total_amount" property="totalAmount"/>
         <result column="status" property="status"/>
+        <result column="payment_status" property="paymentStatus"/>
         <result column="service_address" property="serviceAddress"/>
         <result column="service_time" property="serviceTime"/>
         <result column="payment_time" property="paymentTime"/>
@@ -37,6 +38,7 @@
             st.name AS service_type_name,
             o.total_amount,
             o.status,
+            pr.status as payment_status,
             o.service_address,
             o.service_time,
             o.payment_time,
@@ -55,6 +57,8 @@
             nurse n ON o.nurse_id = n.id
         LEFT JOIN 
             service_type st ON o.service_type_id = st.id
+        LEFT JOIN
+            payment_record pr ON o.order_no = pr.order_no
         <where>
             <if test="params.userId != null">
                 AND o.user_id = #{params.userId}

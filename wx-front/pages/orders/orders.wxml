@@ -52,10 +52,21 @@
           <text class="content-label">服务类型：</text>
           <text class="content-value">{{item.serviceName || item.serviceType}}</text>
         </view>
-        <!-- 已接单状态下显示护工电话按钮将在底部显示 -->
         <view class="content-row">
           <text class="content-label">服务金额：</text>
           <text class="content-value price">¥{{item.amount || item.price}}</text>
+        </view>
+        <view class="content-row">
+          <text class="content-label">支付状态：</text>
+          <text 
+            class="payment-status-btn {{item.paymentStatus === 3 ? 'disabled' : ''}}"
+            style="background-color: {{item.paymentStatusInfo.color}};"
+            data-orderid="{{item.id}}"
+            data-paymentstatus="{{item.paymentStatus}}"
+            bindtap="onPaymentStatusTap"
+          >
+            {{item.paymentStatusInfo.text}}
+          </text>
         </view>
       </view>
 
