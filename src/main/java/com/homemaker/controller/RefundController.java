@@ -30,7 +30,6 @@ public class RefundController {
     /**
      * 创建退款申请
      * @param orderId 订单ID
-     * @param refundAmount 退款金额
      * @param reason 退款原因
      * @param userId 用户ID
      * @return 退款信息
@@ -38,11 +37,10 @@ public class RefundController {
     @PostMapping("/create")
     @Operation(summary = "创建退款申请")
     public Result createRefund(@RequestParam Long orderId,
-                              @RequestParam BigDecimal refundAmount,
                               @RequestParam String reason,
                               @RequestParam Long userId) {
         try {
-            Refund refund = refundService.createRefund(orderId, refundAmount, reason, userId);
+            Refund refund = refundService.createRefund(orderId, reason, userId);
             
             Map<String, Object> result = new HashMap<>();
             result.put("refundId", refund.getId());
@@ -92,18 +90,16 @@ public class RefundController {
 
     /**
      * 审核退款申请（管理员接口）
-     * @param refundId 退款ID
-     * @param status 审核状态 2:通过 3:拒绝
-     * @param remark 审核备注
-     * @param adminId 管理员ID
+     * @param params 请求参数
      * @return 操作结果
      */
     @PostMapping("/audit")
     @Operation(summary = "审核退款申请")
-    public Result auditRefund(@RequestParam Long refundId,
-                             @RequestParam Integer status,
-                             @RequestParam String remark,
-                             @RequestParam Long adminId) {
+    public Result auditRefund(@RequestBody Map<String, Object> params) {
+        Long refundId = Long.valueOf(params.get("refundId").toString());
+        Integer status = Integer.valueOf(params.get("status").toString());
+        String remark = params.get("remark").toString();
+        Long adminId = Long.valueOf(params.get("adminId").toString());
         try {
             if (status != 2 && status != 3) {
                 return Result.error("无效的审核状态");

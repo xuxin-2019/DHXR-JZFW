@@ -53,6 +53,7 @@
                                 <span>订单管理</span>
                             </template>
                             <el-menu-item index="1-1">订单列表</el-menu-item>
+                            <el-menu-item index="1-2">退款审核</el-menu-item>
                         </el-submenu>
                         <el-menu-item index="5">
                             <i class="el-icon-star-on"></i>
@@ -180,7 +181,7 @@
                                         <el-tag v-if="scope.row.status === 1">待派单</el-tag>
                                         <el-tag type="primary" v-else-if="scope.row.status === 2">已派单</el-tag>
                                         <el-tag type="success" v-else-if="scope.row.status === 3">已接单</el-tag>
-        
+
                                         <el-tag type="info" v-else-if="scope.row.status === 5">已完成</el-tag>
                                         <el-tag type="danger" v-else-if="scope.row.status === 6">已取消</el-tag>
                                         <el-tag v-else-if="scope.row.status === 7">已拒绝</el-tag>
@@ -244,6 +245,92 @@
                                     v-model:page-size="orderPageSize"
                                     @size-change="handleOrderSizeChange"
                                     @current-change="handleOrderCurrentChange"
+                                >
+                                </el-pagination>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 退款审核页面 -->
+                    <div v-else-if="activeMenu === '1-2'">
+                        <div class="content-header">
+                            <h3>退款审核</h3>
+                        </div>
+                        <div class="content-body">
+                            <el-row :gutter="20" class="search-row">
+                                <el-col :span="6">
+                                    <el-input v-model="refundSearchForm.refundNo" placeholder="退款编号" clearable></el-input>
+                                </el-col>
+                                <el-col :span="6">
+                                    <el-input v-model="refundSearchForm.orderId" placeholder="订单ID" clearable></el-input>
+                                </el-col>
+                                <el-col :span="6">
+                                    <el-select v-model="refundSearchForm.status" placeholder="退款状态">
+                                        <el-option label="全部" value=""></el-option>
+                                        <el-option label="待审核" value="1"></el-option>
+                                        <el-option label="审核通过" value="2"></el-option>
+                                        <el-option label="审核拒绝" value="3"></el-option>
+                                    </el-select>
+                                </el-col>
+                                <el-col :span="6">
+                                    <el-button type="primary" @click="searchRefunds">查询</el-button>
+                                    <el-button @click="resetRefundSearch">重置</el-button>
+                                </el-col>
+                            </el-row>
+                            <el-table :data="refundList" style="width: 100%">
+                                <el-table-column prop="orderNo" label="订单编号" width="180"></el-table-column>
+                                <el-table-column prop="orderStatus" label="订单状态">
+                                    <template slot-scope="scope">
+                                        <el-tag v-if="scope.row.orderStatus === 1">待派单</el-tag>
+                                        <el-tag v-else-if="scope.row.orderStatus === 2">已派单</el-tag>
+                                        <el-tag v-else-if="scope.row.orderStatus === 3">已接单</el-tag>
+                                        <el-tag v-else-if="scope.row.orderStatus === 4">服务中</el-tag>
+                                        <el-tag type="success" v-else-if="scope.row.orderStatus === 5">已完成</el-tag>
+                                        <el-tag type="danger" v-else-if="scope.row.orderStatus === 6">已取消</el-tag>
+                                        <el-tag type="warning" v-else-if="scope.row.orderStatus === 7">已拒绝</el-tag>
+                                    </template>
+                                </el-table-column>
+                                <el-table-column prop="totalAmount" label="退款金额"></el-table-column>
+                                <el-table-column prop="reason" label="退款原因" show-overflow-tooltip></el-table-column>
+                                <el-table-column prop="status" label="退款状态">
+                                    <template slot-scope="scope">
+                                        <el-tag v-if="scope.row.status === 1">申请中</el-tag>
+                                        <el-tag type="success" v-else-if="scope.row.status === 2">已通过</el-tag>
+                                        <el-tag type="danger" v-else-if="scope.row.status === 3">已拒绝</el-tag>
+                                        <el-tag v-else-if="scope.row.status === 4">退款中</el-tag>
+                                        <el-tag type="success" v-else-if="scope.row.status === 5">退款成功</el-tag>
+                                        <el-tag type="danger" v-else-if="scope.row.status === 6">退款失败</el-tag>
+                                    </template>
+                                </el-table-column>
+                                <el-table-column prop="remark" label="审核备注" show-overflow-tooltip></el-table-column>
+                                <el-table-column prop="createTime" label="申请时间" width="180">
+                                    <template slot-scope="scope">
+                                        <div>{{ formatDateTime(scope.row.createTime) }}</div>
+                                    </template>
+                                </el-table-column>
+                                <el-table-column label="操作" fixed="right">
+                                    <template slot-scope="scope">
+                                        <div class="operation-buttons">
+                                            <!-- 待审核(1)：通过、拒绝 -->
+                                            <template v-if="scope.row.status === 1">
+                                                <el-button type="success" size="small" @click="approveRefund(scope.row.id)">通过</el-button>
+                                                <el-button type="danger" size="small" @click="rejectRefund(scope.row.id)">拒绝</el-button>
+                                            </template>
+                                            <!-- 所有状态都显示查看按钮 -->
+                                            <el-button type="primary" size="small" @click="viewOrderDetail(scope.row.orderId)">查看</el-button>
+                                        </div>
+                                    </template>
+                                </el-table-column>
+                            </el-table>
+                            <div class="pagination-row">
+                                <el-pagination
+                                    background
+                                    layout="total, sizes, prev, pager, next, jumper"
+                                    :total="refundTotal"
+                                    v-model:current-page="refundCurrentPage"
+                                    v-model:page-size="refundPageSize"
+                                    @size-change="handleRefundSizeChange"
+                                    @current-change="handleRefundCurrentChange"
                                 >
                                 </el-pagination>
                             </div>
@@ -522,6 +609,35 @@
                 <el-button type="primary" @click="confirmEditServiceType">确定</el-button>
             </div>
         </el-dialog>
+        
+        <!-- 订单详情对话框 -->
+        <el-dialog title="订单详情" :visible.sync="orderDetailDialogVisible" width="800px">
+            <div v-if="orderDetail" class="order-detail">
+                <el-descriptions :column="1" border>
+                    <el-descriptions-item label="订单编号">{{ orderDetail.orderNo }}</el-descriptions-item>
+                    <el-descriptions-item label="用户姓名">{{ orderDetail.userName }}</el-descriptions-item>
+                    <el-descriptions-item label="联系电话">{{ orderDetail.userPhone }}</el-descriptions-item>
+                    <el-descriptions-item label="服务类型">{{ orderDetail.serviceTypeName }}</el-descriptions-item>
+                    <el-descriptions-item label="服务时间">{{ orderDetail.serviceTime }}</el-descriptions-item>
+                    <el-descriptions-item label="服务地址">{{ orderDetail.serviceAddress }}</el-descriptions-item>
+                    <el-descriptions-item label="服务时长">{{ orderDetail.serviceDuration }} 小时</el-descriptions-item>
+<!--                    <el-descriptions-item label="服务价格">{{ orderDetail.servicePrice }} 元</el-descriptions-item>-->
+                    <el-descriptions-item label="总金额">{{ orderDetail.totalAmount }} 元</el-descriptions-item>
+                    <el-descriptions-item label="支付状态">{{ orderDetail.paymentStatus === 1 ? '已支付' : '未支付' }}</el-descriptions-item>
+<!--                    <el-descriptions-item label="订单状态">{{ orderDetail.statusText }}</el-descriptions-item>-->
+                    <el-descriptions-item label="创建时间">{{ orderDetail.createTime }}</el-descriptions-item>
+                    <el-descriptions-item label="更新时间">{{ orderDetail.updateTime }}</el-descriptions-item>
+                    <el-descriptions-item label="护工姓名" v-if="orderDetail.nurseName">{{ orderDetail.nurseName }}</el-descriptions-item>
+                    <el-descriptions-item label="护工电话" v-if="orderDetail.nursePhone">{{ orderDetail.nursePhone }}</el-descriptions-item>
+                </el-descriptions>
+            </div>
+            <div v-else class="no-data">
+                加载中...
+            </div>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="orderDetailDialogVisible = false">关闭</el-button>
+            </div>
+        </el-dialog>
     </div>
 
     <!-- 引入Vue.js -->
@@ -531,6 +647,6 @@
     <!-- 引入axios用于HTTP请求 -->
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <!-- 引入自定义脚本 -->
-    <script src="js/app.js"></script>
+    <script src="js/app.js?v=1.1"></script>
 </body>
 </html>

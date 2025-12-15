@@ -12,6 +12,11 @@ spring:
     username: root
     password: xusd1994
     driver-class-name: com.mysql.cj.jdbc.Driver
+#    生产环境数据库地址
+#    url: jdbc:mysql://120.53.84.167:3306/home_make_db?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+#    username: xusd1994
+#    password: Fullgroup81!
+#    driver-class-name: com.mysql.cj.jdbc.Driver
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: GMT+8
@@ -61,8 +66,8 @@ wechat:
     cert_path: /opt/wechat/cert/apiclient_cert.p12
     cert_password: 721124
     # 回调通知地址
-    notify_url: https://3mqaze.top/homemaker/api/pay/notify
-    refund_notify_url: https://3mqaze.top/homemaker/api/pay/refund-notify
+    notify_url: https://3mqaze.top/homemaker/api/payment/notify
+    refund_notify_url: https://3mqaze.top/homemaker/api/refund/notify
     # APIv3配置（可选）
     api_v3_key: your_api_v3_key_here
 
@@ -77,15 +82,17 @@ login:
       - ""
       - "/homemaker/index.html"
       - "/homemaker/api/service-type/list"
+      - "/homemaker/error"
+      - "/error"
     # 登录相关接口和支付相关接口
     login-paths:
       - "/api/wx/login"
       - "/api/admin/login"
       - "/api/wx/validate"
       - "/api/test/"
-      - "/homemaker/api/pay/notify"
-      - "/homemaker/api/pay/refund-notify"
-      - "/homemaker/api/payment/status"
+      - "/api/payment/notify"
+      - "/api/refund/notify"
+      - "/api/payment/status"
     # 静态资源路径前缀
     static-prefixes:
       - "/static/"

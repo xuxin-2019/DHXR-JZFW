@@ -19,4 +19,11 @@ public interface OrderMapper extends BaseMapper<Order> {
      * @return 订单VO列表
      */
     Page<OrderVO> selectOrderListWithDetails(Page<OrderVO> page, Map<String, Object> params);
+    
+    /**
+     * 根据订单ID查询订单详情，支持联表查询用户、护工和服务类型信息
+     * @param id 订单ID
+     * @return 订单VO详情
+     */
+    OrderVO selectOrderDetailById(Long id);
 }

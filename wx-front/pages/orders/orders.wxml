@@ -91,8 +91,12 @@
         </view>
         <!-- 已完成状态下显示去评价和申请退款按钮 -->
         <view wx:if="{{item.status === 5 || (item.statusInfo && item.statusInfo.code === 5)}}" class="action-buttons">
-          <view class="review-btn" data-id="{{item.orderNo}}" data-nurseid="{{item.nurseId}}" bindtap="onReviewButtonTap">去评价</view>
-          <view class="refund-btn" data-id="{{item.orderNo}}" bindtap="onRefundButtonTap">申请退款</view>
+          <view class="review-btn" data-id="{{item.orderId}}" data-nurseid="{{item.nurseId}}" bindtap="onReviewButtonTap">去评价</view>
+          <view class="refund-btn" data-id="{{item.id}}" bindtap="onRefundButtonTap">申请退款</view>
+        </view>
+        <!-- 待派单、已派单、已接单状态下显示申请退款按钮 -->
+        <view wx:if="{{item.status === 1 || item.status === 2 || item.status === 3}}" class="action-buttons">
+          <view class="refund-btn" data-id="{{item.id}}" bindtap="onRefundButtonTap">申请退款</view>
         </view>
       </view>
     </view>
@@ -167,6 +171,32 @@
     <view class="modal-footer">
       <button class="cancel-btn" bindtap="closeReviewModal">取消</button>
       <button class="submit-btn" bindtap="submitReview" type="primary">提交评价</button>
+    </view>
+  </view>
+  
+  <!-- 退款申请弹窗 -->
+  <view class="modal-mask" wx:if="{{showRefundModal}}" bindtap="closeRefundModal"></view>
+  <view class="modal-container" wx:if="{{showRefundModal}}">
+    <view class="modal-header">
+      <text class="modal-title">申请退款</text>
+      <view class="modal-close" bindtap="closeRefundModal">✕</view>
+    </view>
+    <view class="modal-content">
+      <view class="refund-reason-section">
+        <text class="content-label">退款原因：</text>
+        <textarea 
+          class="refund-textarea" 
+          placeholder="请输入您的退款原因" 
+          value="{{refundReason}}" 
+          bindinput="onRefundReasonInput"
+          maxlength="200"
+        ></textarea>
+        <text class="char-count">{{refundReason.length}}/200</text>
+      </view>
+    </view>
+    <view class="modal-footer">
+      <button class="cancel-btn" bindtap="closeRefundModal">取消</button>
+      <button class="submit-btn" bindtap="submitRefundApplication" type="primary">确认申请</button>
     </view>
   </view>
 </view>

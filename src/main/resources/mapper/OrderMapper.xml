@@ -88,4 +88,40 @@
         ORDER BY 
             o.create_time DESC
     </select>
+    
+    <select id="selectOrderDetailById" resultMap="OrderVOResultMap">
+        SELECT 
+            o.id,
+            o.order_no,
+            o.user_id,
+            u.name AS user_name,
+            o.nurse_id,
+            n.name AS nurse_name,
+            o.service_type_id,
+            st.name AS service_type_name,
+            o.total_amount,
+            o.status,
+            pr.status as payment_status,
+            o.service_address,
+            o.service_time,
+            o.payment_time,
+            o.start_time,
+            o.end_time,
+            o.create_time,
+            o.update_time,
+            u.phone as user_phone,
+            n.phone as nurse_phone,
+            o.service_duration
+        FROM 
+            `order` o
+        LEFT JOIN 
+            user u ON o.user_id = u.id
+        LEFT JOIN 
+            nurse n ON o.nurse_id = n.id
+        LEFT JOIN 
+            service_type st ON o.service_type_id = st.id
+        LEFT JOIN
+            payment_record pr ON o.order_no = pr.order_no
+        WHERE o.id = #{id}
+    </select>
 </mapper>

@@ -27,6 +27,8 @@ public class WebConfig implements WebMvcConfigurer {
                         "/",
                         "/homemaker",
                         "/homemaker/",
+                        "/error",
+                        "/homemaker/error",
                         // 登录相关接口
                         "/api/wx/login",
                         "/api/admin/login",
@@ -34,9 +36,9 @@ public class WebConfig implements WebMvcConfigurer {
                         // 测试接口
                         "/api/test/**",
                         // 支付相关接口
-                        "/homemaker/api/pay/notify",
-                        "/homemaker/api/pay/refund-notify",
-                        "/homemaker/api/payment/status",
+                        "/api/payment/notify",
+                        "/api/refund/notify",
+                        "/api/payment/status",
                         // 静态资源
                         "/static/**",
                         // Swagger文档相关

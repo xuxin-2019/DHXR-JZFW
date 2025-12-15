@@ -197,4 +197,10 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
                         .orderByAsc("create_time") // 按创建时间升序排列，优先处理更早的订单
         );
     }
+    
+    @Override
+    public OrderVO findOrderDetailById(Long id) {
+        // 调用Mapper的selectOrderDetailById方法查询订单详情
+        return orderMapper.selectOrderDetailById(id);
+    }
 }

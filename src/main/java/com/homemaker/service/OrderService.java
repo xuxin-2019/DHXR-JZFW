@@ -94,4 +94,11 @@ public interface OrderService extends IService<Order> {
      * @return 待支付订单列表
      */
     List<Order> findPendingPaymentOrders();
+    
+    /**
+     * 根据订单ID查询订单详情，支持联表查询用户、护工和服务类型信息
+     * @param id 订单ID
+     * @return 订单VO详情
+     */
+    OrderVO findOrderDetailById(Long id);
 }

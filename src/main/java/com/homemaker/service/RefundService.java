@@ -3,6 +3,7 @@ package com.homemaker.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.homemaker.entity.Refund;
+import com.homemaker.entity.RefundVo;
 
 import java.math.BigDecimal;
 import java.util.Map;
@@ -15,12 +16,11 @@ public interface RefundService extends IService<Refund> {
     /**
      * 创建退款申请
      * @param orderId 订单ID
-     * @param refundAmount 退款金额
      * @param reason 退款原因
      * @param userId 用户ID
      * @return 退款记录
      */
-    Refund createRefund(Long orderId, BigDecimal refundAmount, String reason, Long userId);
+    Refund createRefund(Long orderId, String reason, Long userId);
 
     /**
      * 提交微信退款申请
@@ -89,5 +89,5 @@ public interface RefundService extends IService<Refund> {
      * @param params 查询参数
      * @return 分页结果
      */
-    IPage<Refund> pageRefund(Integer pageNum, Integer pageSize, Map<String, Object> params);
+    IPage<RefundVo> pageRefund(Integer pageNum, Integer pageSize, Map<String, Object> params);
 }

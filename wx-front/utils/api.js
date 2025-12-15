@@ -2,8 +2,8 @@
 // 统一管理后端API路由
 
 // 后端服务基础地址
-// const BASE_URL = 'http://127.0.0.1:8080/homemaker/api';
-const BASE_URL = 'https://3mqaze.top/homemaker/api';
+const BASE_URL = 'http://127.0.0.1:8080/homemaker/api';
+// const BASE_URL = 'https://3mqaze.top/homemaker/api';
 
 // API路由配置
 export const API = {
@@ -70,7 +70,7 @@ export const API = {
   // 退款相关接口
   refund: {
     // 提交退款申请
-    apply: `${BASE_URL}/refund/apply`,
+    apply: `${BASE_URL}/refund/create`,
     // 查询退款记录
     records: `${BASE_URL}/refund/records`
   },

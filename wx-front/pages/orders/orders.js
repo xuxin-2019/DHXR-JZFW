@@ -43,7 +43,11 @@ Page({
     currentOrderId: '',
     currentNurseId: '',
     currentRating: 5,
-    reviewContent: ''
+    reviewContent: '',
+    // 退款申请相关数据
+    showRefundModal: false,
+    currentRefundOrderId: '',
+    refundReason: ''
   },
 
   /**
@@ -274,8 +278,81 @@ Page({
   onRefundButtonTap: function(e) {
     const orderId = e.currentTarget.dataset.id;
     
-    wx.navigateTo({
-      url: `/pages/refund-apply/refund-apply?orderId=${orderId}`
+    this.setData({
+      showRefundModal: true,
+      currentRefundOrderId: orderId,
+      refundReason: ''
+    });
+  },
+  
+  /**
+   * 关闭退款申请弹窗
+   */
+  closeRefundModal: function() {
+    this.setData({
+      showRefundModal: false
+    });
+  },
+  
+  /**
+   * 处理退款原因输入
+   * @param {Object} e 事件对象
+   */
+  onRefundReasonInput: function(e) {
+    this.setData({
+      refundReason: e.detail.value
+    });
+  },
+  
+  /**
+   * 提交退款申请
+   */
+  submitRefundApplication: function() {
+    const { currentRefundOrderId, refundReason, userId } = this.data;
+    
+    // 验证退款原因
+    if (!refundReason.trim()) {
+      wx.showToast({
+        title: '请输入退款原因',
+        icon: 'none'
+      });
+      return;
+    }
+    
+    wx.showLoading({ title: '提交中...' });
+    
+    // 调用API创建退款申请
+    request(API.refund.apply, {
+      method: 'POST',
+      header: {
+        'content-type': 'application/x-www-form-urlencoded'
+      },
+      data: {
+        orderId: parseInt(currentRefundOrderId), // 转换为数字类型，匹配后端Long类型要求
+        userId: userId,
+        reason: refundReason.trim()
+      }
+    }).then(res => {
+      wx.hideLoading();
+      
+      if (res.code === 200) {
+        wx.showToast({ title: '退款申请提交成功' });
+        this.closeRefundModal();
+        // 重新加载订单列表，更新订单状态
+        this.loadOrderList(true);
+      } else {
+        wx.showToast({ 
+          title: res.message || '退款申请提交失败', 
+          icon: 'none' 
+        });
+      }
+    }).catch(error => {
+      wx.hideLoading();
+      wx.showToast({ 
+        title: '网络错误，请重试', 
+        icon: 'none' 
+      });
+      console.error('提交退款申请失败:', error);
     });
   },
   
@@ -314,7 +391,7 @@ Page({
    */
   submitReview: function() {
     const evaluation = {
-      orderId: this.data.currentOrderId,
+      orderId: parseInt(this.data.currentOrderId), // 转换为数字类型，匹配后端Long类型要求
       nurseId: this.data.currentNurseId,
       userId: this.data.userId,
       rating: this.data.currentRating,
@@ -326,6 +403,9 @@ Page({
     // 调用API创建评价
     request(API.evaluation.create, {
       method: 'POST',
+      header: {
+        'content-type': 'application/x-www-form-urlencoded'
+      },
       data: evaluation
     }).then(res => {
       wx.hideLoading();

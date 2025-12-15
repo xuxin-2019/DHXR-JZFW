@@ -98,6 +98,9 @@ window.vm = new Vue({
         
         // 指派护工对话框
         assignNurseDialogVisible: false,
+        // 订单详情对话框
+        orderDetailDialogVisible: false,
+        orderDetail: {},
         assignNurseForm: {
             orderId: '',
             serviceTypeId: '',
@@ -196,6 +199,17 @@ window.vm = new Vue({
         evaluationPageSize: 10,
         evaluationSearchForm: {
             orderId: ''
+        },
+        
+        // 退款管理相关
+        refundList: [],
+        refundTotal: 0,
+        refundCurrentPage: 1,
+        refundPageSize: 10,
+        refundSearchForm: {
+            refundNo: '',
+            orderId: '',
+            status: ''
         },
     },
     
@@ -401,7 +415,249 @@ window.vm = new Vue({
                 this.loadServiceTypes();
             } else if (key === '5') {
                 this.loadEvaluations();
+            } else if (key === '1-2') {
+                this.loadRefunds();
             }
+        },
+        
+        // 加载退款列表
+        loadRefunds() {
+            const token = localStorage.getItem('token');
+            // 准备查询参数
+            const params = {
+                pageNum: this.refundCurrentPage,
+                pageSize: this.refundPageSize
+            };
+            if (this.refundSearchForm.refundNo) params.refundNo = this.refundSearchForm.refundNo;
+            if (this.refundSearchForm.orderId) params.orderId = this.refundSearchForm.orderId;
+            if (this.refundSearchForm.status) params.status = this.refundSearchForm.status;
+            
+            axios.get('/homemaker/api/refund/page', {
+                params: params,
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+            .then(response => {
+                if (response.data.code === 200) {
+                    this.refundList = response.data.data.records;
+                    this.refundTotal = response.data.data.total;
+                } else {
+                    this.$message.error(response.data.message);
+                    // 使用模拟数据
+                    this.refundList = [
+                        {
+                            id: 1,
+                            refundNo: 'REF202301010001',
+                            orderId: 1001,
+                            paymentId: 2001,
+                            refundAmount: 200.00,
+                            totalAmount: 500.00,
+                            reason: '服务不满意',
+                            status: 1,
+                            createTime: '2023-01-01 10:00:00',
+                            updateTime: '2023-01-01 10:00:00',
+                            remark: null,
+                            adminId: null
+                        },
+                        {
+                            id: 2,
+                            refundNo: 'REF202301020002',
+                            orderId: 1002,
+                            paymentId: 2002,
+                            refundAmount: 150.00,
+                            totalAmount: 300.00,
+                            reason: '服务未完成',
+                            status: 2,
+                            createTime: '2023-01-02 14:30:00',
+                            updateTime: '2023-01-02 15:00:00',
+                            remark: '退款审核通过',
+                            adminId: 1
+                        },
+                        {
+                            id: 3,
+                            refundNo: 'REF202301030003',
+                            orderId: 1003,
+                            paymentId: 2003,
+                            refundAmount: 300.00,
+                            totalAmount: 600.00,
+                            reason: '用户取消订单',
+                            status: 3,
+                            createTime: '2023-01-03 09:15:00',
+                            updateTime: '2023-01-03 10:00:00',
+                            remark: '退款理由不充分，拒绝退款',
+                            adminId: 1
+                        }
+                    ];
+                    this.refundTotal = this.refundList.length;
+                }
+            })
+            .catch(error => {
+                console.error('加载退款列表失败:', error);
+                this.$message.error('加载退款列表失败，请稍后重试');
+                // 使用模拟数据
+                this.refundList = [
+                    {
+                        id: 1,
+                        refundNo: 'REF202301010001',
+                        orderId: 1001,
+                        paymentId: 2001,
+                        refundAmount: 200.00,
+                        totalAmount: 500.00,
+                        reason: '服务不满意',
+                        status: 1,
+                        createTime: '2023-01-01 10:00:00',
+                        updateTime: '2023-01-01 10:00:00',
+                        remark: null,
+                        adminId: null
+                    },
+                    {
+                        id: 2,
+                        refundNo: 'REF202301020002',
+                        orderId: 1002,
+                        paymentId: 2002,
+                        refundAmount: 150.00,
+                        totalAmount: 300.00,
+                        reason: '服务未完成',
+                        status: 2,
+                        createTime: '2023-01-02 14:30:00',
+                        updateTime: '2023-01-02 15:00:00',
+                        remark: '退款审核通过',
+                        adminId: 1
+                    },
+                    {
+                        id: 3,
+                        refundNo: 'REF202301030003',
+                        orderId: 1003,
+                        paymentId: 2003,
+                        refundAmount: 300.00,
+                        totalAmount: 600.00,
+                        reason: '用户取消订单',
+                        status: 3,
+                        createTime: '2023-01-03 09:15:00',
+                        updateTime: '2023-01-03 10:00:00',
+                        remark: '退款理由不充分，拒绝退款',
+                        adminId: 1
+                    }
+                ];
+                this.refundTotal = this.refundList.length;
+            });
+        },
+        
+        // 搜索退款
+        searchRefunds() {
+            this.refundCurrentPage = 1;
+            this.loadRefunds();
+        },
+        
+        // 重置退款搜索
+        resetRefundSearch() {
+            this.refundSearchForm = {
+                refundNo: '',
+                orderId: '',
+                status: ''
+            };
+            this.refundCurrentPage = 1;
+            this.loadRefunds();
+        },
+        
+        // 处理退款分页大小变化
+        handleRefundSizeChange(size) {
+            this.refundPageSize = size;
+            this.loadRefunds();
+        },
+        
+        // 处理退款分页当前页变化
+        handleRefundCurrentChange(current) {
+            this.refundCurrentPage = current;
+            this.loadRefunds();
+        },
+        
+        // 审核通过退款
+        approveRefund(id) {
+            const token = localStorage.getItem('token');
+            this.$confirm('确定要审核通过该退款申请吗？', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).then(() => {
+                axios.post('/homemaker/api/refund/audit', {
+                    refundId: id,
+                    status: 2, // 2表示审核通过
+                    remark: '审核通过',
+                    adminId: 1 // 假设管理员ID为1，实际应该从登录信息中获取
+                }, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                }).then(response => {
+                    if (response.data.code === 200) {
+                        this.$message.success('退款审核通过');
+                        this.loadRefunds();
+                    } else {
+                        this.$message.error(response.data.message);
+                    }
+                }).catch(error => {
+                    console.error('审核通过失败:', error);
+                    this.$message.error('审核通过失败，请稍后重试');
+                });
+            }).catch(() => {
+                // 用户取消操作
+            });
+        },
+        
+        // 审核拒绝退款
+        rejectRefund(id) {
+            this.$prompt('请输入拒绝原因', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                inputPattern: /^[\s\S]+$/, // 不能为空
+                inputErrorMessage: '拒绝原因不能为空'
+            }).then(({ value }) => {
+                const token = localStorage.getItem('token');
+                axios.post('/homemaker/api/refund/audit', {
+                    refundId: id,
+                    status: 3, // 3表示审核拒绝
+                    remark: value,
+                    adminId: 1 // 假设管理员ID为1，实际应该从登录信息中获取
+                }, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                }).then(response => {
+                    if (response.data.code === 200) {
+                        this.$message.success('退款审核拒绝');
+                        this.loadRefunds();
+                    } else {
+                        this.$message.error(response.data.message);
+                    }
+                }).catch(error => {
+                    console.error('审核拒绝失败:', error);
+                    this.$message.error('审核拒绝失败，请稍后重试');
+                });
+            }).catch(() => {
+                // 用户取消操作
+            });
+        },
+        
+        // 查看订单详情
+        viewOrderDetail(orderId) {
+            const token = localStorage.getItem('token');
+            axios.get(`/homemaker/api/order/detail/${orderId}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            }).then(response => {
+                if (response.data.code === 200) {
+                    this.orderDetail = response.data.data;
+                    this.orderDetailDialogVisible = true;
+                } else {
+                    this.$message.error(response.data.message || '获取订单详情失败');
+                }
+            }).catch(error => {
+                console.error('获取订单详情失败:', error);
+                this.$message.error('获取订单详情失败，请稍后重试');
+            });
         },
         
         // 加载评价列表

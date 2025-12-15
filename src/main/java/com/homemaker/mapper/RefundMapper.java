@@ -1,8 +1,13 @@
 package com.homemaker.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.homemaker.entity.Refund;
+import com.homemaker.entity.RefundVo;
 import org.apache.ibatis.annotations.Mapper;
+
+import java.util.Map;
 
 /**
  * 退款申请Mapper接口
@@ -30,4 +35,6 @@ public interface RefundMapper extends BaseMapper<Refund> {
      * @return 退款记录
      */
     Refund selectByOutRefundNo(String outRefundNo);
+
+    Page<RefundVo> selectByPage(Page<RefundVo> page, Map<String,Object> params);
 }

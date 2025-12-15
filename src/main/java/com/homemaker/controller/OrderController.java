@@ -245,4 +245,20 @@ public class OrderController extends BaseController {
         
         return Result.success("查询成功", pageData);
     }
+    
+    /**
+     * 根据订单ID查询订单详情
+     * @param id 订单ID
+     * @return 订单详情
+     */
+    @GetMapping("/detail/{id}")
+    @Operation(summary = "查询订单详情", description = "根据订单ID查询订单详情，关联用户表和护工表")
+    public Result findOrderDetailById(@PathVariable Long id) {
+        OrderVO orderVO = orderService.findOrderDetailById(id);
+        if (orderVO != null) {
+            return Result.success("查询成功", orderVO);
+        } else {
+            return Result.error("订单不存在");
+        }
+    }
 }

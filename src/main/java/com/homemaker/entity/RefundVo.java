@@ -12,19 +12,27 @@ import java.util.Date;
  * 退款申请表
  */
 @Data
-@TableName("refund_application")
-public class Refund {
+public class RefundVo {
 
     /**
      * 主键ID
      */
-    @TableId(type = IdType.AUTO)
     private Long id;
 
     /**
      * 订单ID
      */
     private Long orderId;
+
+    /**
+     * 订单编号
+     */
+    private String orderNo;
+
+    /**
+     * 订单状态
+     */
+    private Integer orderStatus;
 
     /**
      * 支付记录ID
