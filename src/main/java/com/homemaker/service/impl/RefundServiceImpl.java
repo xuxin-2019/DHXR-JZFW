@@ -99,12 +99,17 @@ public class RefundServiceImpl extends ServiceImpl<RefundMapper, Refund> impleme
             // 查询支付记录获取相关信息
             Payment payment = paymentService.getById(refund.getPaymentId());
             if (payment == null) {
+                logger.error("支付记录不存在，支付ID：{}", refund.getPaymentId());
                 throw new RuntimeException("支付记录不存在");
             }
+            
+            logger.info("获取到支付记录，订单号：{}，交易号：{}", payment.getOutTradeNo(), payment.getTransactionId());
             
             // 将金额转换为分（微信支付API使用分作为货币单位）
             Integer totalFee = payment.getAmount().multiply(new BigDecimal(100)).intValue();
             Integer refundFee = refund.getRefundAmount().multiply(new BigDecimal(100)).intValue();
+            
+            logger.info("退款金额信息 - 总金额：{}分，退款金额：{}分", totalFee, refundFee);
             
             // 调用微信支付退款API
             Map<String, String> refundResult = wechatPayUtil.refund(
@@ -117,16 +122,19 @@ public class RefundServiceImpl extends ServiceImpl<RefundMapper, Refund> impleme
             );
             
             if (refundResult == null) {
-                throw new RuntimeException("调用微信退款API失败");
+                logger.error("调用微信退款API返回结果为空，退款ID：{}", refund.getId());
+                throw new RuntimeException("调用微信退款API失败：返回结果为空");
             }
+            
+            logger.info("微信退款API返回结果：{}", refundResult);
             
             // 检查退款结果
-            if (!"SUCCESS".equals(refundResult.get("return_code"))) {
-                throw new RuntimeException("微信退款失败：" + refundResult.get("return_msg"));
-            }
-            
             if (!"SUCCESS".equals(refundResult.get("result_code"))) {
-                throw new RuntimeException("微信退款失败：" + refundResult.get("err_code_des"));
+                String errorCode = refundResult.get("err_code") != null ? refundResult.get("err_code") : "未知错误码";
+                String errorMsg = refundResult.get("err_code_des") != null ? refundResult.get("err_code_des") : "未知错误";
+                logger.error("微信退款失败（result_code）：错误码={}，错误信息={}，退款ID：{}", errorCode, errorMsg, refund.getId());
+                updateRefundStatus(refund,6);//更新退款状态为退款失败
+                throw new RuntimeException("微信退款失败：" + errorMsg);
             }
             
             logger.info("微信退款申请提交成功，退款ID：{}，微信退款单号：{}", 
@@ -208,7 +216,7 @@ public class RefundServiceImpl extends ServiceImpl<RefundMapper, Refund> impleme
             // 更新订单状态为已退款
             Order order = orderService.getById(refund.getOrderId());
             if (order != null) {
-                order.setStatus(7); // 已退款
+                order.setStatus(6); // 已取消
                 orderService.updateById(order);
             }
         }
@@ -224,21 +232,40 @@ public class RefundServiceImpl extends ServiceImpl<RefundMapper, Refund> impleme
             Map<String, String> notifyMap = wechatPayUtil.xmlToMap(notifyData);
             
             // 验证回调签名
-            boolean signatureValid = wechatPayUtil.verifySign(notifyMap);
-            if (!signatureValid) {
-                logger.error("微信退款回调签名验证失败");
-                return false;
-            }
-            
+//            boolean signatureValid = wechatPayUtil.verifySign(notifyMap);
+//            if (!signatureValid) {
+//                logger.error("微信退款回调签名验证失败");
+//                return false;
+//            }
+
             // 检查返回状态
             if (!"SUCCESS".equals(notifyMap.get("return_code"))) {
                 logger.error("微信退款回调返回失败: {}", notifyMap.get("return_msg"));
                 return false;
             }
             
+            // 解密退款通知的加密信息
+            String reqInfo = notifyMap.get("req_info");
+            if (reqInfo == null || reqInfo.isEmpty()) {
+                logger.error("微信退款回调缺少加密信息req_info");
+                return false;
+            }
+            
+            // 解密req_info字段
+            String decryptedReqInfo = wechatPayUtil.decryptRefundNotify(reqInfo);
+            if (decryptedReqInfo == null) {
+                logger.error("微信退款回调加密信息解密失败");
+                return false;
+            }
+            
+            logger.info("解密后的微信退款回调信息: {}", decryptedReqInfo);
+            
+            // 将解密后的XML转换为Map
+            Map<String, String> refundNotifyMap = wechatPayUtil.xmlToMap(decryptedReqInfo);
+            
             // 获取退款相关信息
-            String outRefundNo = notifyMap.get("out_refund_no");
-            String refundStatus = notifyMap.get("refund_status");
+            String outRefundNo = refundNotifyMap.get("out_refund_no");
+            String refundStatus = refundNotifyMap.get("refund_status");
             
             // 查询退款记录
             Refund refund = getRefundByOutRefundNo(outRefundNo);

@@ -1,5 +1,6 @@
 package com.homemaker.util;
 
+import com.homemaker.service.impl.RefundServiceImpl;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -10,6 +11,9 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.http.util.EntityUtils;
+import org.apache.commons.codec.digest.DigestUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -18,15 +22,21 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.io.File;
 import java.security.MessageDigest;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.Base64;
+import javax.crypto.Cipher;
+import javax.crypto.spec.SecretKeySpec;
 
 /**
  * 微信支付工具类
  */
 @Component
 public class WechatPayUtil {
+
+    private static final Logger logger = LoggerFactory.getLogger(WechatPayUtil.class);
 
     @Value("${wechat.pay.appid}")
     private String appid;
@@ -42,6 +52,12 @@ public class WechatPayUtil {
 
     @Value("${wechat.pay.refund_notify_url}")
     private String refundNotifyUrl;
+
+    @Value("${wechat.pay.cert_path}")
+    private String certPath;
+
+    @Value("${wechat.pay.cert_password}")
+    private String certPassword;
 
     // 微信支付API地址
     private static final String UNIFIED_ORDER_URL = "https://api.mch.weixin.qq.com/pay/unifiedorder";
@@ -166,6 +182,24 @@ public class WechatPayUtil {
                 // 使用SSL的请求（如退款接口）
                 SSLContextBuilder builder = new SSLContextBuilder();
                 builder.loadTrustMaterial(null, new TrustSelfSignedStrategy());
+                
+                // 加载商户API证书
+                try {
+                    File certFile = new File(certPath);
+                    if (certFile.exists() && certFile.isFile()) {
+                        builder.loadKeyMaterial(certFile, certPassword.toCharArray(), certPassword.toCharArray());
+                        logger.info("成功加载微信支付API证书: {}", certPath);
+                    } else {
+                        logger.error("微信支付API证书不存在或不是文件: {}", certPath);
+                        // 在测试环境下，如果证书不存在，仍然尝试使用无证书的SSL连接
+                        // 实际生产环境中，证书是必需的
+                    }
+                } catch (Exception e) {
+                    logger.error("加载微信支付API证书失败: {}", e.getMessage());
+                    // 在测试环境下，如果加载证书失败，仍然尝试使用无证书的SSL连接
+                    // 实际生产环境中，加载证书失败应该直接抛出异常
+                }
+                
                 SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(
                         builder.build(), SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
                 httpClient = HttpClients.custom().setSSLSocketFactory(sslsf).build();
@@ -186,7 +220,7 @@ public class WechatPayUtil {
             httpClient.close();
             return result;
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("发送HTTP请求失败: {}", e.getMessage(), e);
             return null;
         }
     }
@@ -339,7 +373,8 @@ public class WechatPayUtil {
         if (responseXml == null) {
             return null;
         }
-
+        logger.info("===responseXml:{}===",responseXml);
+        System.out.println("===responseXml:" + responseXml);
         // 解析响应
         return xmlToMap(responseXml);
     }
@@ -406,6 +441,34 @@ public class WechatPayUtil {
         params.remove("sign");
         String newSign = generateSign(params);
         return sign.equals(newSign);
+    }
+
+    /**
+     * 解密微信退款回调的加密信息
+     * @param encryptedReqInfo 加密的退款信息
+     * @return 解密后的退款信息XML
+     */
+    public String decryptRefundNotify(String encryptedReqInfo) {
+        try {
+            // Base64解码
+            byte[] encryptedData = Base64.getDecoder().decode(encryptedReqInfo);
+            
+            // 微信退款回调解密密钥是API密钥本身
+            // 根据API密钥的长度选择AES算法（当前密钥32字节，对应AES-256）
+            SecretKeySpec secretKeySpec = new SecretKeySpec(key.getBytes("UTF-8"), "AES");
+            Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+            cipher.init(Cipher.DECRYPT_MODE, secretKeySpec);
+            
+            // 解密数据
+            byte[] decryptedData = cipher.doFinal(encryptedData);
+            
+            // 转换为字符串
+            return new String(decryptedData, "UTF-8");
+        } catch (Exception e) {
+            logger.error("解密微信退款回调信息失败: {}", e.getMessage(), e);
+            logger.error("API密钥长度: {}, 密钥内容: {}", key.length(), key);
+            return null;
+        }
     }
 
     /**

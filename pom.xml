@@ -45,6 +45,13 @@
             <artifactId>mysql-connector-java</artifactId>
         </dependency>
 
+        <!-- PostgreSQL 驱动（用于 Neon 数据库） -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
         <!-- MyBatis-Plus -->
         <dependency>
             <groupId>com.baomidou</groupId>

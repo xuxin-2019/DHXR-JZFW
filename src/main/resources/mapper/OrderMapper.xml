@@ -50,9 +50,9 @@
             n.phone as nurse_phone,
             o.service_duration
         FROM 
-            `order` o
+            "order" o
         LEFT JOIN 
-            user u ON o.user_id = u.id
+            "app_user" u ON o.user_id = u.id
         LEFT JOIN 
             nurse n ON o.nurse_id = n.id
         LEFT JOIN 
@@ -113,9 +113,9 @@
             n.phone as nurse_phone,
             o.service_duration
         FROM 
-            `order` o
+            "order" o
         LEFT JOIN 
-            user u ON o.user_id = u.id
+            "app_user" u ON o.user_id = u.id
         LEFT JOIN 
             nurse n ON o.nurse_id = n.id
         LEFT JOIN 

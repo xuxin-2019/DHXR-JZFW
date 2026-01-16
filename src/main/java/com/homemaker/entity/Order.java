@@ -13,7 +13,7 @@ import java.util.Date;
  * 订单实体类
  */
 @Data
-@TableName("`order`")
+@TableName("\"order\"")
 public class Order implements Serializable {
 
     private static final long serialVersionUID = 1L;

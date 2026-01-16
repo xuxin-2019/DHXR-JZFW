@@ -78,6 +78,13 @@ public class EvaluationServiceImpl extends ServiceImpl<EvaluationMapper, Evaluat
         
         // 获取所有用户ID和护工ID
         List<Evaluation> evaluations = evaluationPage.getRecords();
+        
+        // 如果评价列表为空，直接返回空结果
+        if (evaluations == null || evaluations.isEmpty()) {
+            resultPage.setRecords(new java.util.ArrayList<>());
+            return resultPage;
+        }
+        
         List<Long> userIds = evaluations.stream().map(Evaluation::getUserId).distinct().collect(Collectors.toList());
         List<Long> nurseIds = evaluations.stream().map(Evaluation::getNurseId).distinct().collect(Collectors.toList());
         

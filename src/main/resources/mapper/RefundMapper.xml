@@ -61,7 +61,9 @@
         ra.refund_amount, ra.total_amount, ra.reason, ra.status, ra.admin_id, ra.remark,
         ra.create_time, ra.update_time
         from refund_application ra
-        left join `order` o on ra.order_id = o.id
+        left join 
+            "order" o
+        on ra.order_id = o.id
         <where>
             <if test="params.orderNo != null and params.orderNo != ''">
                 and o.order_no = #{params.orderNo}
